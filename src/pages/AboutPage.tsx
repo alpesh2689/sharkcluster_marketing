@@ -1,27 +1,11 @@
 import { Link } from "react-router-dom";
 import {
   ArrowRight, Award, Globe, Heart, Lightbulb, Rocket, Server, Shield, Users,
+  Check, Boxes, Cloud, Database, RefreshCw, Activity, Zap,
 } from "lucide-react";
 import Seo from "@/components/Seo";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
-
-/**
- * About page, ported from the old site's /about.
- *
- * Structure follows that page: split hero with a stat grid, "Our story",
- * a six-up values grid, and a closing careers CTA.
- *
- * Two things were not carried across verbatim, both flagged below:
- *  - the stat strip ("10,000+ Servers Deployed", "50+ Global PoPs", "99.99%
- *    Uptime Guarantee", "2,000+ Businesses Served") and the story's "2,000
- *    businesses across 50+ countries" — none of these are corroborated
- *    anywhere, and the 99.99% figure contradicts the unapproved SLA;
- *  - the 2022 founding year, which appears only in that page's own copy.
- *
- * "Coreway Solution, Ahmedabad, Gujarat, India" IS carried across — it is
- * stated consistently on the old site's contact and legal pages.
- */
 
 const values = [
   {
@@ -56,16 +40,54 @@ const values = [
   },
 ];
 
-// Product facts, each verifiable against the platform itself.
-// TODO_CONFIRM — owner: marketing. The old /about showed company-scale figures
-// here instead: servers deployed, global PoPs, uptime guarantee, businesses
-// served. Supply real numbers and they can replace or extend this strip.
 const stats = [
   { value: "7", label: "Backup types" },
   { value: "5", label: "Deployment methods" },
   { value: "4", label: "Live cloud providers" },
   { value: "∞", label: "Apps per server" },
 ];
+
+const platformHighlights = [
+  { icon: Boxes, label: "Self-Hosted Apps", desc: "ERP, helpdesk, invoicing on your VPS" },
+  { icon: Cloud, label: "Multi-Provider", desc: "Compare and deploy across providers" },
+  { icon: Database, label: "Managed Databases", desc: "Clusters that outlive servers" },
+  { icon: RefreshCw, label: "Portable Backups", desc: "Move between providers freely" },
+  { icon: Activity, label: "Health Monitoring", desc: "Know before things break" },
+  { icon: Zap, label: "Two-Layer Caching", desc: "Redis + Varnish for speed" },
+];
+
+function PlatformMock() {
+  return (
+    <div className="rounded-xl border border-ink-200 bg-white p-5 shadow-lg">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+            <Server className="h-4 w-4" />
+          </span>
+          <span className="text-sm font-semibold text-ink-900">Platform Overview</span>
+        </div>
+        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">Live</span>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {platformHighlights.map((item) => (
+          <div key={item.label} className="rounded-lg border border-ink-100 bg-ink-50/50 p-3">
+            <div className="flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                <item.icon className="h-3.5 w-3.5" />
+              </span>
+              <p className="text-xs font-semibold text-ink-900">{item.label}</p>
+            </div>
+            <p className="mt-1.5 text-[10px] leading-snug text-ink-500">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2">
+        <Check className="h-3.5 w-3.5 text-emerald-600" />
+        <span className="text-xs font-medium text-emerald-700">Your data stays on your VPS — we never store it</span>
+      </div>
+    </div>
+  );
+}
 
 export default function AboutPage() {
   const hero = useReveal<HTMLDivElement>();
@@ -84,7 +106,7 @@ export default function AboutPage() {
         breadcrumbSchema={[{ name: "Home", path: "/" }, { name: "About", path: "/about" }]}
       />
 
-      {/* Hero — split layout, matching the old site's About page */}
+      {/* Hero — split layout */}
       <section className="relative overflow-hidden pb-16 pt-28 lg:pt-36">
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 grid-pattern" />
@@ -102,7 +124,6 @@ export default function AboutPage() {
                 <Server className="h-4 w-4" />
                 About Us
               </span>
-              {/* Line break and highlight placement match the old site's headline. */}
               <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.12] tracking-tight text-ink-900 sm:text-5xl">
                 Powering the <br />
                 <span className="gradient-text">next generation</span> of cloud infrastructure
@@ -119,20 +140,24 @@ export default function AboutPage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              {stats.map((stat, i) => (
-                <div
-                  key={stat.label}
-                  className="rounded-2xl border border-ink-200 bg-white p-7 text-center shadow-sm transition-all duration-300 hover:border-brand-200 hover:shadow-lg"
-                  style={{ transitionDelay: `${i * 60}ms` }}
-                >
-                  <div className="font-display text-3xl font-extrabold gradient-text sm:text-4xl">
-                    {stat.value}
-                  </div>
-                  <div className="mt-2 text-sm font-semibold text-ink-500">{stat.label}</div>
-                </div>
-              ))}
+            <div className="relative">
+              <div className="absolute -inset-4 -z-10 rounded-3xl bg-gradient-to-br from-brand-200/30 to-blue-200/20 blur-2xl" />
+              <PlatformMock />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats band */}
+      <section className="border-y border-ink-200 bg-ink-50/50">
+        <div className="container-px py-8">
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="font-display text-3xl font-extrabold text-brand-600 sm:text-4xl">{stat.value}</p>
+                <p className="mt-1 text-sm font-medium text-ink-500">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -233,12 +258,6 @@ export default function AboutPage() {
               We're always looking for talented people who share our passion for building great
               infrastructure.
             </p>
-            {/*
-              The old site linked this to /careers. That page was not rebuilt, so the
-              CTA goes to /contact for now.
-              TODO_CONFIRM — owner: marketing. Either stand up a careers page and
-              repoint this, or confirm that contact is the intended destination.
-            */}
             <Link to="/contact" className="btn-primary btn-lg mt-9">
               Get in Touch
               <ArrowRight className="h-5 w-5" />

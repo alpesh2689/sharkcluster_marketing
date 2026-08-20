@@ -1,8 +1,8 @@
-import { Check, ArrowRight, Sparkles, Server, RefreshCw, UserCog, Shield, Database, Cloud, HelpCircle, ReceiptText, Layers, Wallet, PackagePlus, FileText } from "lucide-react";
+import { Check, ArrowRight, Sparkles, Server, RefreshCw, UserCog, Shield, Database, Cloud, CircleHelp as HelpCircle, ReceiptText, Layers, Wallet, PackagePlus, FileText, ChevronRight, Boxes } from "lucide-react";
 import Seo from "@/components/Seo";
-import PageHero from "@/components/PageHero";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
+import { Link } from "react-router-dom";
 
 const plans = [
   {
@@ -73,6 +73,43 @@ const pricingFaqSchema = [
   { q: "Can I change plans later?", a: "Yes, you can upgrade or downgrade your plan at any time. Changes are prorated based on your billing cycle." },
 ];
 
+function BillingMock() {
+  return (
+    <div className="rounded-xl border border-ink-200 bg-white p-5 shadow-lg">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+            <ReceiptText className="h-4 w-4" />
+          </span>
+          <span className="text-sm font-semibold text-ink-900">Monthly Invoice</span>
+        </div>
+        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">Transparent</span>
+      </div>
+      <div className="space-y-2.5">
+        {[
+          { label: "SharkCluster Business", desc: "Plan fee", amount: "$29.00", color: "text-ink-900" },
+          { label: "DigitalOcean server", desc: "4 vCPU · 8GB · NYC", amount: "$48.00", color: "text-ink-900" },
+          { label: "Offsite backup storage", desc: "20 GB", amount: "$4.00", color: "text-ink-900" },
+          { label: "Account credit", desc: "Applied", amount: "-$10.00", color: "text-emerald-600" },
+        ].map((row) => (
+          <div key={row.label} className="flex items-center justify-between rounded-lg border border-ink-100 bg-ink-50/50 px-3 py-2.5">
+            <div>
+              <p className="text-sm font-semibold text-ink-900">{row.label}</p>
+              <p className="text-[10px] text-ink-400">{row.desc}</p>
+            </div>
+            <span className={`font-mono text-sm font-bold ${row.color}`}>{row.amount}</span>
+          </div>
+        ))}
+        <div className="flex items-center justify-between rounded-lg border-2 border-brand-200 bg-brand-50 px-3 py-2.5">
+          <p className="text-sm font-bold text-ink-900">Total</p>
+          <span className="font-mono text-sm font-bold text-brand-700">$71.00</span>
+        </div>
+      </div>
+      <p className="mt-3 text-center text-[10px] text-ink-400">One invoice — plan fee + server costs, no markup</p>
+    </div>
+  );
+}
+
 export default function PricingPage() {
   const { ref, visible } = useReveal<HTMLDivElement>();
 
@@ -86,12 +123,46 @@ export default function PricingPage() {
         faqSchema={pricingFaqSchema}
         breadcrumbSchema={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]}
       />
-      <PageHero
-        eyebrow="Simple Pricing"
-        title="Choose your perfect plan"
-        description="Transparent pricing with no hidden fees. Every plan includes free backups, free SSL, and unlimited apps. Cloud provider costs are billed separately at provider rates."
-        icon={Sparkles}
-      />
+
+      {/* Split hero */}
+      <section className="relative overflow-hidden pt-28 pb-12 lg:pt-36 lg:pb-16">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 grid-pattern" />
+          <div className="absolute inset-0 hero-glow" />
+          <div className="absolute -left-40 top-10 h-80 w-80 rounded-full bg-brand-300/15 blur-3xl" />
+        </div>
+        <div className="container-px">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3.5 py-1.5 text-sm font-semibold text-brand-700">
+                <Sparkles className="h-4 w-4" />
+                Simple Pricing
+              </span>
+              <h1 className="mt-5 font-display text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">
+                Choose your <br />
+                <span className="gradient-text">perfect plan</span>
+              </h1>
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-600">
+                Transparent pricing with no hidden fees. Every plan includes free backups, free SSL, and
+                unlimited apps. Cloud provider costs are billed separately at provider rates — no markup.
+              </p>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <a href="https://cloud.sharkcluster.com/register" className="btn-primary btn-lg w-full sm:w-auto">
+                  Get Started
+                  <ArrowRight className="h-5 w-5" />
+                </a>
+                <Link to="/contact" className="btn-secondary btn-lg w-full sm:w-auto">
+                  Talk to Sales
+                </Link>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute -inset-4 -z-10 rounded-3xl bg-gradient-to-br from-brand-200/30 to-blue-200/20 blur-2xl" />
+              <BillingMock />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Included free bar */}
       <div className="container-px pb-8">
@@ -183,7 +254,8 @@ export default function PricingPage() {
               </span>
               <h2 className="mt-5 heading-lg">How billing works</h2>
               <p className="mt-4 text-body">
-                Your SharkCluster plan fee covers the control panel, automation, and support — it does not include the underlying cloud servers. Here is exactly what you are paying for, and what is billed separately.
+                Your SharkCluster plan fee covers the control panel, automation, and support — it does not include
+                the underlying cloud servers. Here is exactly what you are paying for, and what is billed separately.
               </p>
             </div>
 
@@ -196,7 +268,9 @@ export default function PricingPage() {
                   <h3 className="font-display text-base font-bold text-ink-900">Plan fee vs. server costs</h3>
                 </div>
                 <p className="text-sm leading-relaxed text-ink-500">
-                  The SharkCluster plan fee is separate from cloud provider server costs. Servers are billed at the provider's own rates and passed through to your invoice with no markup. The plan fee covers the panel, automation, migrations, SSL, and support.
+                  The SharkCluster plan fee is separate from cloud provider server costs. Servers are billed at the
+                  provider's own rates and passed through to your invoice with no markup. The plan fee covers the
+                  panel, automation, migrations, SSL, and support.
                 </p>
               </div>
 
@@ -208,7 +282,8 @@ export default function PricingPage() {
                   <h3 className="font-display text-base font-bold text-ink-900">Provider billing models</h3>
                 </div>
                 <p className="text-sm leading-relaxed text-ink-500">
-                  Providers bill differently — hourly, prepaid, or usage-based — and the panel handles each model transparently so you always know what you owe before you deploy.{" "}
+                  Providers bill differently — hourly, prepaid, or usage-based — and the panel handles each model
+                  transparently so you always know what you owe before you deploy.{" "}
                   <a href="/cloud-providers" className="font-medium text-brand-600 underline-offset-2 hover:underline">Compare providers &rarr;</a>
                 </p>
               </div>
@@ -221,7 +296,8 @@ export default function PricingPage() {
                   <h3 className="font-display text-base font-bold text-ink-900">Account credit</h3>
                 </div>
                 <p className="text-sm leading-relaxed text-ink-500">
-                  You can add credit to your account and apply it toward any invoice — plan fees, server costs, and add-ons alike. Credit is applied automatically when an invoice is generated.
+                  You can add credit to your account and apply it toward any invoice — plan fees, server costs, and
+                  add-ons alike. Credit is applied automatically when an invoice is generated.
                 </p>
               </div>
 
