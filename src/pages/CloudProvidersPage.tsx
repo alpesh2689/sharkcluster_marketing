@@ -6,16 +6,6 @@ import { Cloud, Check, ArrowRight, Globe, Server, Zap, Shield, RefreshCw, Credit
 
 const providers = [
   {
-    name: "SharkCluster",
-    regions: "Managed infrastructure",
-    billing: "Hourly + monthly invoice",
-    billingIcon: Zap,
-    desc: "Our own managed infrastructure — servers provisioned and maintained by SharkCluster. Zero cloud-provider setup; the simplest path from sign-up to live app.",
-    badge: "Recommended",
-    comingSoon: false,
-    accent: "brand",
-  },
-  {
     name: "DigitalOcean",
     regions: "12 datacenters",
     billing: "Hourly + monthly invoice",
@@ -80,7 +70,7 @@ const billingModels = [
     icon: Zap,
     title: "Hourly",
     desc: "Billed as you use, added to your monthly invoice.",
-    examples: "SharkCluster, DigitalOcean",
+    examples: "DigitalOcean",
   },
   {
     icon: CreditCard,
@@ -97,10 +87,10 @@ const billingModels = [
 ];
 
 const comparisonFeatures = [
-  { label: "Billing model", sharkcluster: "Hourly + monthly", digitalocean: "Hourly + monthly", ovhcloud: "Prepaid", contabo: "Prepaid" },
-  { label: "Datacenter regions", sharkcluster: "Managed", digitalocean: "12 regions", ovhcloud: "Europe & global", contabo: "11 datacenters" },
-  { label: "Best for", sharkcluster: "Simplest setup", digitalocean: "Most workloads", ovhcloud: "Compliance & EU", contabo: "RAM-heavy workloads" },
-  { label: "Status", sharkcluster: "Available", digitalocean: "Available", ovhcloud: "Available", contabo: "Available" },
+  { label: "Billing model", digitalocean: "Hourly + monthly", ovhcloud: "Prepaid", contabo: "Prepaid" },
+  { label: "Datacenter regions", digitalocean: "12 regions", ovhcloud: "Europe & global", contabo: "11 datacenters" },
+  { label: "Best for", digitalocean: "Most workloads", ovhcloud: "Compliance & EU", contabo: "RAM-heavy workloads" },
+  { label: "Status", digitalocean: "Available", ovhcloud: "Available", contabo: "Available" },
 ];
 
 export default function CloudProvidersPage() {
@@ -180,10 +170,10 @@ export default function CloudProvidersPage() {
 
                   {!provider.comingSoon && (
                     <a
-                      href={provider.name === "SharkCluster" ? "https://cloud.sharkcluster.com/register" : `/cloud-providers/${provider.name.toLowerCase().replace("sharkcluster", "")}`}
+                      href={`/cloud-providers/${provider.name.toLowerCase()}`}
                       className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700"
                     >
-                      {provider.name === "SharkCluster" ? "Get Started" : `Explore ${provider.name}`}
+                      {`Explore ${provider.name}`}
                       <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </a>
                   )}
@@ -214,8 +204,7 @@ export default function CloudProvidersPage() {
                 <thead>
                   <tr className="border-b border-ink-200 bg-ink-50/50">
                     <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">Feature</th>
-                    <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-brand-600">SharkCluster</th>
-                    <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">DigitalOcean</th>
+                    <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-brand-600">DigitalOcean</th>
                     <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">OVHcloud</th>
                     <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-ink-400">Contabo</th>
                   </tr>
@@ -224,8 +213,7 @@ export default function CloudProvidersPage() {
                   {comparisonFeatures.map((row, i) => (
                     <tr key={row.label} className={i % 2 === 1 ? "bg-ink-50/30" : ""}>
                       <td className="px-5 py-4 text-sm font-semibold text-ink-700">{row.label}</td>
-                      <td className="px-5 py-4 text-sm font-semibold text-brand-700">{row.sharkcluster}</td>
-                      <td className="px-5 py-4 text-sm text-ink-600">{row.digitalocean}</td>
+                      <td className="px-5 py-4 text-sm font-semibold text-brand-700">{row.digitalocean}</td>
                       <td className="px-5 py-4 text-sm text-ink-600">{row.ovhcloud}</td>
                       <td className="px-5 py-4 text-sm text-ink-600">{row.contabo}</td>
                     </tr>
