@@ -5,10 +5,10 @@ export default function RefundPage() {
   return (
     <LegalPage
       title="Refund Policy"
-      description="SharkCluster's Refund Policy covers plan fees and add-ons. Cloud provider server costs follow the provider's own refund rules."
+      description="SharkCluster's Refund Policy covers server charges and add-ons billed through the panel."
       path="/legal/refund"
       sections={[
-        { heading: "Scope", body: "This policy covers SharkCluster plan fees and add-ons purchased through the panel. Cloud provider server costs follow the provider's own refund rules and are not refundable through SharkCluster." },
+        { heading: "Scope", body: "This policy covers server charges and add-ons billed through the panel. Where a cloud provider has already collected a prepaid period, that provider's own refund rules apply." },
         { heading: "Refund window", body: "TODO_CONFIRM." },
         { heading: "Account credit and credit notes", body: "Refunds may be issued as account credit applied to future invoices, or returned to the original payment method. The conditions for each are TODO_CONFIRM." },
         { heading: "Prepaid provider plans", body: "Contabo and OVHcloud collect server cost up front. What happens to an unused prepaid period is TODO_CONFIRM." },

@@ -2,10 +2,12 @@ import { useState } from "react";
 import { ChevronDown, HelpCircle, ArrowRight } from "lucide-react";
 import { useReveal } from "@/hooks/useReveal";
 
+// NOTE: answers below restate the trial terms in prose. If src/content/trial.ts
+// changes, re-read these — they will not update themselves.
 const faqs = [
   {
     q: "What exactly is included for free?",
-    a: "Free local backups, free SSL certificates, unlimited free migrations, unlimited applications per server, free self-hosted business apps (ERP, helpdesk, ticketing, invoicing), and a dedicated DevOps manager on Business and Enterprise plans. You only pay for your cloud provider's server costs and any optional add-ons like offsite backup storage at $0.04 per GB.",
+    a: "Free local backups, free SSL certificates, unlimited free migrations, unlimited applications per server, free self-hosted business apps (ERP, helpdesk, ticketing, invoicing), and a dedicated DevOps manager on Business and Enterprise plans. You only pay for your cloud provider's server costs and any optional add-ons, such as offsite backup storage, which is billed per GB.",
   },
   {
     q: "Where does my data actually live?",
@@ -21,7 +23,7 @@ const faqs = [
   },
   {
     q: "What kind of self-hosted apps can I run?",
-    a: "Any PHP, Node.js, Python, Ruby, .NET, or Docker application. This includes ERP systems like ERPNext and Odoo, helpdesk tools like Zammad and osTicket, invoicing apps like Invoice Ninja, and anything else you can deploy. Each app gets its own domain, SSL, database, and staging environment.",
+    a: "Any PHP, Node.js, Python, or Docker application. This includes ERP systems like ERPNext and Odoo, helpdesk tools like Zammad and osTicket, invoicing apps like Invoice Ninja, and anything else you can deploy. Each app gets its own domain, SSL, database, and staging environment.",
   },
   {
     q: "What happens if my server goes down?",
@@ -29,7 +31,7 @@ const faqs = [
   },
   {
     q: "How do backups work?",
-    a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Local backups are free. Offsite backup storage (object storage) is available at $0.04 per GB — and it's the only type that survives server loss.",
+    a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Local backups are free. Offsite backup storage (object storage) is billed per GB — and it's the only type that survives the loss of the server itself.",
   },
   {
     q: "Is there really no credit card required to start?",

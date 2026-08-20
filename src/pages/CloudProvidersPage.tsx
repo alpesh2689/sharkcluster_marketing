@@ -3,10 +3,12 @@ import PageHero from "@/components/PageHero";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
 import { Cloud, Check, ArrowRight, Globe, Server, Zap, Shield, RefreshCw, CreditCard } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const providers = [
   {
     name: "DigitalOcean",
+    detailPath: "/cloud-providers/digitalocean",
     regions: "12 datacenters",
     billing: "Hourly + monthly invoice",
     billingIcon: Zap,
@@ -17,6 +19,7 @@ const providers = [
   },
   {
     name: "OVHcloud",
+    detailPath: "/cloud-providers/ovhcloud",
     regions: "Europe & beyond",
     billing: "Prepaid",
     billingIcon: CreditCard,
@@ -27,6 +30,7 @@ const providers = [
   },
   {
     name: "Contabo",
+    detailPath: "/cloud-providers/contabo",
     regions: "Global",
     billing: "Prepaid",
     billingIcon: CreditCard,
@@ -37,6 +41,7 @@ const providers = [
   },
   {
     name: "Vultr",
+    detailPath: null,
     regions: "23 locations",
     billing: "Usage-based",
     billingIcon: RefreshCw,
@@ -47,6 +52,7 @@ const providers = [
   },
   {
     name: "Hetzner",
+    detailPath: null,
     regions: "EU & US",
     billing: "Usage-based",
     billingIcon: RefreshCw,
@@ -168,14 +174,14 @@ export default function CloudProvidersPage() {
                     )}
                   </div>
 
-                  {!provider.comingSoon && (
-                    <a
-                      href={`/cloud-providers/${provider.name.toLowerCase()}`}
+                  {provider.detailPath && (
+                    <Link
+                      to={provider.detailPath}
                       className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700"
                     >
                       {`Explore ${provider.name}`}
                       <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                    </a>
+                    </Link>
                   )}
                 </div>
               );

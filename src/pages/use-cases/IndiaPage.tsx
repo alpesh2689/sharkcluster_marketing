@@ -135,9 +135,13 @@ function MockPanel({ type }: { type: string }) {
         </div>
         <div className="space-y-2.5">
           {[
-            { provider: "DigitalOcean", city: "Bangalore", code: "BLR1", latency: "12ms", color: "bg-brand-50 text-brand-600" },
-            { provider: "OVHcloud", city: "Mumbai", code: "Coming soon", latency: "—", color: "bg-ink-100 text-ink-500" },
-            { provider: "Contabo", city: "Delhi NCR", code: "Coming soon", latency: "—", color: "bg-ink-100 text-ink-500" },
+            // No latency figures — they depend on where the visitor is, not on the
+            // region, so any number here would be meaningless at best.
+            // TODO_CONFIRM — owner: product. Are Mumbai (OVHcloud) and Delhi NCR
+            // (Contabo) actually on the roadmap? Remove the rows if not.
+            { provider: "DigitalOcean", city: "Bangalore", code: "BLR1", latency: "Live", color: "bg-brand-50 text-brand-600" },
+            { provider: "OVHcloud", city: "Mumbai", code: "TODO_CONFIRM", latency: "—", color: "bg-ink-100 text-ink-500" },
+            { provider: "Contabo", city: "Delhi NCR", code: "TODO_CONFIRM", latency: "—", color: "bg-ink-100 text-ink-500" },
           ].map((dc) => (
             <div key={dc.provider} className="flex items-center justify-between rounded-lg border border-ink-100 bg-ink-50/50 px-3 py-2.5">
               <div className="flex items-center gap-2.5">
@@ -172,8 +176,10 @@ function MockPanel({ type }: { type: string }) {
         </div>
         <div className="space-y-2.5">
           {[
-            { day: "Mon — Fri", hours: "9:00 — 18:00 IST", status: "Online", color: "bg-emerald-100 text-emerald-700" },
-            { day: "Saturday", hours: "10:00 — 14:00 IST", status: "Online", color: "bg-emerald-100 text-emerald-700" },
+            // TODO_CONFIRM — owner: support lead. Real coverage hours. /legal/sla
+            // leaves response times unconfirmed; these two must be consistent.
+            { day: "Mon — Fri", hours: "TODO_CONFIRM", status: "Online", color: "bg-emerald-100 text-emerald-700" },
+            { day: "Saturday", hours: "TODO_CONFIRM", status: "Online", color: "bg-emerald-100 text-emerald-700" },
             { day: "Sunday", hours: "Emergency only", status: "On-call", color: "bg-amber-100 text-amber-700" },
           ].map((slot) => (
             <div key={slot.day} className="flex items-center justify-between rounded-lg border border-ink-100 bg-ink-50/50 px-3 py-2.5">

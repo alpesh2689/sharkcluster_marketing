@@ -9,6 +9,7 @@ import HowItWorksPage from "@/pages/HowItWorksPage";
 import FAQPage from "@/pages/FAQPage";
 import DocsPage from "@/pages/DocsPage";
 import ApiDocsPage from "@/pages/docs/ApiDocsPage";
+import DocGuidePage from "@/pages/docs/DocGuidePage";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
 import NotFoundPage from "@/pages/NotFoundPage";
@@ -114,6 +115,8 @@ export default function App() {
           <Route path="/docs" element={<DocsPage />} />
           <Route path="/docs/api" element={<ApiDocsPage />} />
           <Route path="/docs/api/:slug" element={<ApiDocsPage />} />
+          {/* Must come after /docs/api so it does not shadow the API reference. */}
+          <Route path="/docs/:category/:slug" element={<DocGuidePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/legal/privacy" element={<PrivacyPage />} />

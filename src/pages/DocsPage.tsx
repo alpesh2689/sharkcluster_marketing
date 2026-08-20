@@ -110,13 +110,13 @@ export default function DocsPage() {
                 <ul className="mt-5 divide-y divide-ink-100 border-t border-ink-100">
                   {doc.guides.map((guide) => (
                     <li key={guide.slug}>
-                      <a
-                        href={`/docs/${guide.slug}`}
+                      <Link
+                        to={`/docs/${guide.slug}`}
                         className="group/guide flex items-center justify-between gap-3 py-2.5 text-sm font-medium text-ink-700 transition-colors hover:text-brand-600"
                       >
                         <span>{guide.label}</span>
                         <ChevronRight className="h-4 w-4 shrink-0 text-ink-300 transition-all group-hover/guide:text-brand-500 group-hover/guide:translate-x-0.5" />
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

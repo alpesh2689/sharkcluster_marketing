@@ -1,61 +1,14 @@
-import { Check, ArrowRight, Sparkles, Server, RefreshCw, UserCog, Shield, Database, Cloud, CircleHelp as HelpCircle, ReceiptText, Layers, Wallet, PackagePlus, FileText, ChevronRight, Boxes } from "lucide-react";
+import { ArrowRight, Sparkles, Server, RefreshCw, UserCog, Shield, Database, Cloud, CircleHelp as HelpCircle, ReceiptText, Layers, Wallet, FileText } from "lucide-react";
 import Seo from "@/components/Seo";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
 import { Link } from "react-router-dom";
+import PlanConfigurator from "@/components/pricing/PlanConfigurator";
+import AddonPricing from "@/components/pricing/AddonPricing";
+import { useEffect, useMemo, useState } from "react";
+import { fetchPublicPlans, API_CONFIGURED, type PublicPlan } from "@/lib/api";
+import { pricePlans, formatPrice } from "@/lib/planShaping";
 
-const plans = [
-  {
-    name: "Starter",
-    desc: "Perfect for a single site or small app",
-    price: "$11",
-    period: "/mo",
-    features: [
-      "1 server included",
-      "Unlimited applications",
-      "Free local backups",
-      "Free SSL certificates",
-      "In-browser SSH terminal",
-      "Community support",
-    ],
-    cta: "Get Started",
-    highlighted: false,
-  },
-  {
-    name: "Business",
-    desc: "For growing teams running multiple apps",
-    price: "$29",
-    period: "/mo",
-    features: [
-      "Everything in Starter, plus:",
-      "Unlimited free migrations",
-      "Dedicated DevOps manager",
-      "Priority expert support",
-      "Staging environments",
-      "Health alerts & monitoring",
-      "Free self-hosted business apps",
-    ],
-    cta: "Get Started",
-    highlighted: true,
-  },
-  {
-    name: "Enterprise",
-    desc: "For agencies and high-volume workloads",
-    price: "Custom",
-    period: "",
-    features: [
-      "Everything in Business, plus:",
-      "Multi-server management",
-      "Team permissions & roles",
-      "Offsite backup storage",
-      "Custom service catalogue",
-      "SLA & dedicated support",
-      "Volume discounts",
-    ],
-    cta: "Contact Sales",
-    highlighted: false,
-  },
-];
 
 const includedFree = [
   { icon: RefreshCw, label: "Unlimited free migrations" },
@@ -66,14 +19,71 @@ const includedFree = [
   { icon: UserCog, label: "Dedicated DevOps manager" },
 ];
 
+// NOTE: answers below restate the trial terms in prose. If src/content/trial.ts
+// changes, re-read these — they will not update themselves.
 const pricingFaqSchema = [
-  { q: "How much does SharkCluster cost?", a: "SharkCluster plans start at $11/month for Starter, $29/month for Business (which includes a dedicated DevOps manager and free migrations), and custom pricing for Enterprise. Cloud provider costs are billed separately at provider rates." },
+  { q: "How much does SharkCluster cost?", a: "There are three plans — Starter for a single site or small app, Business for teams running multiple apps, and custom pricing for Enterprise. See the pricing table for current rates. Cloud provider server costs are billed separately at the provider's own rates." },
   { q: "Do you require a credit card to sign up?", a: "No. You can sign up and explore the panel with no credit card required. There are no lock-in contracts — you can cancel anytime." },
-  { q: "Are there hidden fees?", a: "No. Your SharkCluster plan fee is transparent. Cloud provider server costs are billed separately at the provider's rates. Optional add-ons like offsite backup storage are clearly priced per GB." },
+  { q: "Are there hidden fees?", a: "No. You pay the catalogue rate for the servers you run — there is no separate platform fee added on top. Optional add-ons, such as offsite backup storage, are charged only if you use them and appear as their own invoice lines." },
   { q: "Can I change plans later?", a: "Yes, you can upgrade or downgrade your plan at any time. Changes are prorated based on your billing cycle." },
 ];
 
+/**
+ * Sample monthly invoice.
+ *
+ * Line items mirror what the billing cycle actually generates — server charges
+ * per provider, backup storage, Cloudflare, registry — and credit applied
+ * against the total. There is deliberately NO "plan fee" line: the product does
+ * not issue one. SharkCluster's margin is inside the server selling price,
+ * which is what "no markup on top" means.
+ *
+ * Server amounts come from the live catalogue so the example can never quote a
+ * price the customer would not actually be charged.
+ */
 function BillingMock() {
+  const [plans, setPlans] = useState<PublicPlan[]>([]);
+
+  useEffect(() => {
+    if (!API_CONFIGURED) return;
+    const controller = new AbortController();
+    fetchPublicPlans(controller.signal)
+      .then(setPlans)
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, []);
+
+  const priced = useMemo(() => pricePlans(plans, "USD"), [plans]);
+
+  // Two servers on different providers — the whole point of the panel is that
+  // they arrive on one invoice.
+  const picks = useMemo(() => {
+    const byProvider = new Map<string, ReturnType<typeof pricePlans>[number]>();
+    for (const p of priced) {
+      if ((p.memory_gb ?? 0) < 4) continue;
+      const existing = byProvider.get(p.provider);
+      if (!existing || p.price < existing.price) byProvider.set(p.provider, p);
+    }
+    return [...byProvider.values()].sort((a, b) => b.price - a.price).slice(0, 2);
+  }, [priced]);
+
+  const CREDIT = 10;
+  const serverTotal = picks.reduce((sum, p) => sum + p.price, 0);
+  const total = Math.max(serverTotal - CREDIT, 0);
+
+  const rows =
+    picks.length > 0
+      ? [
+          ...picks.map((p) => ({
+            label: `${p.provider_name} server`,
+            desc: [p.vcpus ? `${p.vcpus} vCPU` : null, p.memory_gb ? `${p.memory_gb}GB` : null,
+                   p.region_city || p.region].filter(Boolean).join(" · "),
+            amount: formatPrice(p.price, "USD"),
+            color: "text-ink-900",
+          })),
+          { label: "Account credit", desc: "Applied", amount: `-${formatPrice(CREDIT, "USD")}`, color: "text-emerald-600" },
+        ]
+      : [];
+
   return (
     <div className="rounded-xl border border-ink-200 bg-white p-5 shadow-lg">
       <div className="mb-4 flex items-center justify-between">
@@ -83,29 +93,48 @@ function BillingMock() {
           </span>
           <span className="text-sm font-semibold text-ink-900">Monthly Invoice</span>
         </div>
-        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">Transparent</span>
+        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">
+          Example
+        </span>
       </div>
-      <div className="space-y-2.5">
-        {[
-          { label: "SharkCluster Business", desc: "Plan fee", amount: "$29.00", color: "text-ink-900" },
-          { label: "DigitalOcean server", desc: "4 vCPU · 8GB · NYC", amount: "$48.00", color: "text-ink-900" },
-          { label: "Offsite backup storage", desc: "20 GB", amount: "$4.00", color: "text-ink-900" },
-          { label: "Account credit", desc: "Applied", amount: "-$10.00", color: "text-emerald-600" },
-        ].map((row) => (
-          <div key={row.label} className="flex items-center justify-between rounded-lg border border-ink-100 bg-ink-50/50 px-3 py-2.5">
-            <div>
-              <p className="text-sm font-semibold text-ink-900">{row.label}</p>
-              <p className="text-[10px] text-ink-400">{row.desc}</p>
+
+      {rows.length === 0 ? (
+        <div className="space-y-2.5">
+          {[
+            { label: "Server charges", desc: "Per server, at catalogue rates" },
+            { label: "Backup storage", desc: "Offsite, per GB used" },
+            { label: "Cloudflare", desc: "Per domain, per period" },
+            { label: "Account credit", desc: "Applied against the total" },
+          ].map((row) => (
+            <div key={row.label} className="flex items-center justify-between rounded-lg border border-ink-100 bg-ink-50/50 px-3 py-2.5">
+              <div>
+                <p className="text-sm font-semibold text-ink-900">{row.label}</p>
+                <p className="text-[10px] text-ink-400">{row.desc}</p>
+              </div>
             </div>
-            <span className={`font-mono text-sm font-bold ${row.color}`}>{row.amount}</span>
-          </div>
-        ))}
-        <div className="flex items-center justify-between rounded-lg border-2 border-brand-200 bg-brand-50 px-3 py-2.5">
-          <p className="text-sm font-bold text-ink-900">Total</p>
-          <span className="font-mono text-sm font-bold text-brand-700">$71.00</span>
+          ))}
         </div>
-      </div>
-      <p className="mt-3 text-center text-[10px] text-ink-400">One invoice — plan fee + server costs, no markup</p>
+      ) : (
+        <div className="space-y-2.5">
+          {rows.map((row) => (
+            <div key={row.label} className="flex items-center justify-between rounded-lg border border-ink-100 bg-ink-50/50 px-3 py-2.5">
+              <div>
+                <p className="text-sm font-semibold text-ink-900">{row.label}</p>
+                <p className="text-[10px] text-ink-400">{row.desc}</p>
+              </div>
+              <span className={`font-mono text-sm font-bold ${row.color}`}>{row.amount}</span>
+            </div>
+          ))}
+          <div className="flex items-center justify-between rounded-lg border-2 border-brand-200 bg-brand-50 px-3 py-2.5">
+            <p className="text-sm font-bold text-ink-900">Total</p>
+            <span className="font-mono text-sm font-bold text-brand-700">{formatPrice(total, "USD")}</span>
+          </div>
+        </div>
+      )}
+
+      <p className="mt-3 text-center text-[10px] text-ink-400">
+        Every provider on one invoice — at catalogue rates, with no fee added on top
+      </p>
     </div>
   );
 }
@@ -117,7 +146,7 @@ export default function PricingPage() {
     <>
       <Seo
         title="Pricing — Simple, Transparent Cloud Hosting Plans"
-        description="Simple pricing with no hidden fees. Starter at $11/mo, Business at $29/mo with dedicated DevOps manager, or custom Enterprise pricing. Every plan includes free backups, SSL, and unlimited apps."
+        description="Simple pricing with no hidden fees — Starter, Business and custom Enterprise plans. Every plan includes free local backups, free SSL, and unlimited apps per server. Cloud provider costs billed separately."
         path="/pricing"
         keywords={["cloud hosting pricing", "VPS hosting cost", "managed hosting plans", "server management pricing", "dedicated devops manager"]}
         faqSchema={pricingFaqSchema}
@@ -183,70 +212,32 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Pricing cards */}
+      {/* Server plan configurator — real catalogue pricing, same flow as the
+          panel's quick create form. */}
       <section className="section pt-8">
         <div className="container-px">
-          <div ref={ref} className="grid gap-6 lg:grid-cols-3">
-            {plans.map((plan, i) => (
-              <div
-                key={plan.name}
-                className={`reveal ${visible ? "is-visible" : ""} relative flex flex-col rounded-2xl border p-7 transition-all duration-300 ${
-                  plan.highlighted
-                    ? "border-brand-300 bg-white shadow-2xl shadow-brand-500/15 lg:-translate-y-3"
-                    : "border-ink-200 bg-white shadow-sm hover:border-brand-200 hover:shadow-lg"
-                }`}
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                {plan.highlighted && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-4 py-1 text-xs font-bold text-white shadow-lg shadow-brand-500/30">
-                    Most Popular
-                  </span>
-                )}
-
-                <div>
-                  <h3 className="font-display text-xl font-bold text-ink-900">{plan.name}</h3>
-                  <p className="mt-1 text-sm text-ink-500">{plan.desc}</p>
-                </div>
-
-                <div className="mt-5 flex items-baseline gap-1">
-                  <span className="font-display text-4xl font-extrabold text-ink-900">{plan.price}</span>
-                  <span className="text-sm font-medium text-ink-400">{plan.period}</span>
-                </div>
-
-                <a
-                  href={plan.name === "Enterprise" ? "/contact" : "https://cloud.sharkcluster.com/register"}
-                  className={`mt-6 ${plan.highlighted ? "btn-primary" : "btn-secondary"} w-full justify-center`}
-                >
-                  {plan.cta}
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-
-                <ul className="mt-6 space-y-3 border-t border-ink-100 pt-6">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2.5 text-sm">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-600">
-                        <Check className="h-3 w-3" />
-                      </span>
-                      <span className={feature.endsWith(":") ? "font-semibold text-ink-800" : "text-ink-600"}>
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="eyebrow">
+              <Server className="h-4 w-4" />
+              Server pricing
+            </span>
+            <h2 className="mt-5 heading-lg">Price your server</h2>
+            <p className="mt-4 text-body">
+              Choose how much memory you need and where it should run. These are the live catalogue
+              rates — the same plans and prices you'll see in the panel when you create the server.
+            </p>
           </div>
 
-          <p className={`reveal ${visible ? "is-visible" : ""} mt-8 text-center text-sm text-ink-400`}>
-            All plans have no lock-in contracts. No credit card required to get started. Cloud provider costs billed separately.
-          </p>
+          <div className="mt-12">
+            <PlanConfigurator />
+          </div>
         </div>
       </section>
 
       {/* How billing works */}
       <section className="section pt-0">
         <div className="container-px">
-          <div className={`reveal ${visible ? "is-visible" : ""} mx-auto max-w-3xl`}>
+          <div ref={ref} className={`reveal ${visible ? "is-visible" : ""} mx-auto max-w-3xl`}>
             <div className="mb-8 text-center">
               <span className="eyebrow">
                 <ReceiptText className="h-4 w-4" />
@@ -254,8 +245,8 @@ export default function PricingPage() {
               </span>
               <h2 className="mt-5 heading-lg">How billing works</h2>
               <p className="mt-4 text-body">
-                Your SharkCluster plan fee covers the control panel, automation, and support — it does not include
-                the underlying cloud servers. Here is exactly what you are paying for, and what is billed separately.
+                You pay for the servers you run, at the rates shown above, plus any add-ons you actually use.
+                There is no separate platform charge stacked on top. Here is exactly what lands on an invoice.
               </p>
             </div>
 
@@ -265,12 +256,12 @@ export default function PricingPage() {
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                     <ReceiptText className="h-5 w-5" />
                   </span>
-                  <h3 className="font-display text-base font-bold text-ink-900">Plan fee vs. server costs</h3>
+                  <h3 className="font-display text-base font-bold text-ink-900">What you actually pay for</h3>
                 </div>
                 <p className="text-sm leading-relaxed text-ink-500">
-                  The SharkCluster plan fee is separate from cloud provider server costs. Servers are billed at the
-                  provider's own rates and passed through to your invoice with no markup. The plan fee covers the
-                  panel, automation, migrations, SSL, and support.
+                  Servers, billed at the catalogue rate you saw before you created them, and any add-ons you use.
+                  There is no separate plan or platform fee on the invoice — the panel, automation, migrations,
+                  SSL and support are not billed as line items.
                 </p>
               </div>
 
@@ -284,7 +275,7 @@ export default function PricingPage() {
                 <p className="text-sm leading-relaxed text-ink-500">
                   Providers bill differently — hourly, prepaid, or usage-based — and the panel handles each model
                   transparently so you always know what you owe before you deploy.{" "}
-                  <a href="/cloud-providers" className="font-medium text-brand-600 underline-offset-2 hover:underline">Compare providers &rarr;</a>
+                  <Link to="/cloud-providers" className="font-medium text-brand-600 underline-offset-2 hover:underline">Compare providers &rarr;</Link>
                 </p>
               </div>
 
@@ -296,33 +287,12 @@ export default function PricingPage() {
                   <h3 className="font-display text-base font-bold text-ink-900">Account credit</h3>
                 </div>
                 <p className="text-sm leading-relaxed text-ink-500">
-                  You can add credit to your account and apply it toward any invoice — plan fees, server costs, and
-                  add-ons alike. Credit is applied automatically when an invoice is generated.
+                  You can add credit to your account and apply it toward any invoice — server costs and add-ons
+                  alike. Credit is applied automatically when an invoice is generated, and shows as its own line.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-ink-200 bg-white p-6">
-                <div className="mb-3 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                    <PackagePlus className="h-5 w-5" />
-                  </span>
-                  <h3 className="font-display text-base font-bold text-ink-900">Optional add-ons</h3>
-                </div>
-                <ul className="space-y-2 text-sm text-ink-500">
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 text-brand-500">&bull;</span>
-                    <span>Offsite backup storage — priced per GB (TODO_CONFIRM)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 text-brand-500">&bull;</span>
-                    <span>Cloudflare integration — priced per domain (TODO_CONFIRM)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 text-brand-500">&bull;</span>
-                    <span>Block storage volumes — priced per GB (TODO_CONFIRM)</span>
-                  </li>
-                </ul>
-              </div>
+              <AddonPricing />
             </div>
 
             <div className="mt-4 rounded-2xl border border-ink-200 bg-ink-50/50 p-6">
@@ -335,7 +305,7 @@ export default function PricingPage() {
                     <h3 className="font-display text-base font-bold text-ink-900">GST-compliant invoicing (India)</h3>
                     <p className="mt-1 text-sm leading-relaxed text-ink-500">
                       Indian customers receive GST-compliant invoices with TDS handling built in.{" "}
-                      <a href="/who-we-serve/india" className="font-medium text-brand-600 underline-offset-2 hover:underline">Learn more about India billing &rarr;</a>
+                      <Link to="/who-we-serve/india" className="font-medium text-brand-600 underline-offset-2 hover:underline">Learn more about India billing &rarr;</Link>
                     </p>
                   </div>
                 </div>
@@ -343,7 +313,8 @@ export default function PricingPage() {
             </div>
 
             <p className="mt-6 text-center text-xs text-ink-400">
-              Container Registry and Managed Databases are priced separately from plan fees and server costs (TODO_CONFIRM).
+              Container Registry and Managed Database clusters are billed separately from server costs, and appear
+              as their own invoice lines.
             </p>
           </div>
         </div>
@@ -357,8 +328,8 @@ export default function PricingPage() {
             <h3 className="mt-4 font-display text-xl font-bold text-ink-900">Still have questions about pricing?</h3>
             <p className="mt-2 text-body-sm">Check our full FAQ or talk to our team — we're happy to help you find the right plan.</p>
             <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <a href="/faq" className="btn-secondary">View FAQ</a>
-              <a href="/contact" className="btn-primary">Contact Sales</a>
+              <Link to="/faq" className="btn-secondary">View FAQ</Link>
+              <Link to="/contact" className="btn-primary">Contact Sales</Link>
             </div>
           </div>
         </div>

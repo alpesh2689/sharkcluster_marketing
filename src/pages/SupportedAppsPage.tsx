@@ -31,8 +31,6 @@ const allApps: AppEntry[] = [
   { name: "Strapi", category: "JavaScript", versions: "Latest", desc: "Headless CMS" },
   { name: "Django", category: "Python", versions: "3.11 – 3.13", desc: "The web framework for perfectionists with deadlines" },
   { name: "Flask", category: "Python", versions: "3.11 – 3.13", desc: "Lightweight Python web framework" },
-  { name: "Ruby on Rails", category: "Other", versions: "Latest", desc: "Full-stack Ruby web framework" },
-  { name: ".NET", category: "Other", versions: "Latest", desc: "Microsoft's cross-platform framework" },
   { name: "Docker", category: "Other", versions: "Any image", desc: "Run any containerized application", badge: "Flexible" },
   { name: "Plain HTML/CSS/JS", category: "Other", versions: "—", desc: "Static sites and vanilla web apps" },
 ];
@@ -53,14 +51,16 @@ const databases = [
 ];
 
 const deploySteps = [
-  { icon: Search, title: "Pick your stack", desc: "Choose from PHP, Node.js, Python, Ruby, .NET, or Docker." },
+  { icon: Search, title: "Pick your stack", desc: "Choose from PHP, Node.js, Python, or Docker." },
   { icon: Database, title: "Database auto-wired", desc: "The panel creates the database, user, and credentials — no manual setup." },
   { icon: Shield, title: "SSL & firewall", desc: "Free Let's Encrypt certificate and closed-by-default firewall, automatically." },
   { icon: ArrowRight, title: "Deploy", desc: "Your app is live with a domain, database, and staging environment." },
 ];
 
 const stats = [
-  { value: "16+", label: "Supported stacks" },
+  // TODO_CONFIRM — owner: product. Stack list is admin-managed (technologies
+  // table); re-check this count when it changes. Must match /features/deployment.
+  { value: "14", label: "Supported stacks" },
   { value: "4", label: "Database engines" },
   { value: "5", label: "Deploy methods" },
   { value: "∞", label: "Apps per server" },
@@ -76,7 +76,7 @@ function HeroMock() {
           </span>
           <span className="text-sm font-semibold text-ink-900">App Catalogue</span>
         </div>
-        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">16+ stacks</span>
+        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">14 stacks</span>
       </div>
       <div className="space-y-2">
         {[
@@ -125,7 +125,7 @@ export default function SupportedAppsPage() {
     <>
       <Seo
         title="Supported Apps — Laravel, WordPress, Magento, Node.js, Docker & More"
-        description="Deploy any PHP, Node.js, Python, Ruby, .NET, or Docker application. SharkCluster supports Laravel, WordPress, Magento, Next.js, Django, Flask, Docker, and more with automatic database binding."
+        description="Deploy any PHP, Node.js, Python, or Docker application. SharkCluster supports Laravel, WordPress, Magento, Next.js, Django, Flask, Docker, and more with automatic database binding."
         path="/supported-apps"
         keywords={["supported apps", "Laravel hosting", "WordPress hosting", "Magento hosting", "Node.js hosting", "Docker hosting", "Django hosting", "supported frameworks"]}
         breadcrumbSchema={[{ name: "Home", path: "/" }, { name: "Supported Apps", path: "/supported-apps" }]}
@@ -151,7 +151,7 @@ export default function SupportedAppsPage() {
                 <span className="gradient-text">in minutes</span>
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-600">
-                From Laravel to WordPress, Node.js to Python, Docker to .NET — SharkCluster supports the
+                From Laravel to WordPress, Node.js to Python to Docker — SharkCluster supports the
                 technologies you already use. Each app gets automatic database binding, free SSL, and a
                 staging environment. Filter and search below to find your stack.
               </p>

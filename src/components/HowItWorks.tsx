@@ -1,5 +1,6 @@
 import { Database, GitBranch, Cloud, Server, ArrowRight, Check } from "lucide-react";
 import { useReveal } from "@/hooks/useReveal";
+import { TRIAL_POINTS } from "@/content/trial";
 
 const steps = [
   {
@@ -83,7 +84,7 @@ export default function HowItWorks() {
             <ArrowRight className="h-5 w-5" />
           </a>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            {["No credit card required", "No lock-in contracts", "Cancel anytime"].map((item) => (
+            {TRIAL_POINTS.map((item) => (
               <span key={item} className="flex items-center gap-1.5 text-sm text-ink-500">
                 <Check className="h-4 w-4 text-brand-500" />
                 {item}

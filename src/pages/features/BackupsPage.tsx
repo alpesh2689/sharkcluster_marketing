@@ -7,6 +7,7 @@ import {
 import Seo from "@/components/Seo";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
+import { OFFSITE_PER_GB } from "@/content/pricing";
 
 const backupTypes = [
   { icon: Clock, title: "Auto Backup", desc: "Whole server on the provider's schedule — recovers from losing the server" },
@@ -26,7 +27,7 @@ const featureRows = [
     desc: "Local backups are stored on your server and are free. Offsite backups are uploaded to object storage and the local copy is then deleted — so an offsite backup exists in exactly one place. This is the only type that survives server loss.",
     points: [
       "Local backups — free, stored on the server",
-      "Offsite backups — $0.04 per GB, uploaded to object storage",
+      `Offsite backups — ${OFFSITE_PER_GB} per GB, uploaded to object storage`,
       "Offsite is a move, not a copy — the server-side archive is removed after upload",
       "Offsite restore downloads first, then restores from the downloaded copy",
     ],
@@ -79,7 +80,7 @@ const featureRows = [
 
 const stats = [
   { value: "7", label: "Backup types" },
-  { value: "$0.04", label: "Per GB offsite" },
+  { value: OFFSITE_PER_GB, label: "Per GB offsite" },
   { value: "5", label: "App backups per app" },
   { value: "Free", label: "Local backups" },
 ];
@@ -120,10 +121,10 @@ function MockPanel({ type }: { type: string }) {
               <Cloud className="h-4 w-4 text-brand-600" />
               <div>
                 <p className="text-sm font-semibold text-ink-900">Offsite backup</p>
-                <p className="text-[10px] text-brand-600">Object storage · $0.04/GB</p>
+                <p className="text-[10px] text-brand-600">Object storage · {OFFSITE_PER_GB}/GB</p>
               </div>
             </div>
-            <span className="text-xs font-bold text-brand-700">$0.04/GB</span>
+            <span className="text-xs font-bold text-brand-700">{OFFSITE_PER_GB}/GB</span>
           </div>
         </div>
         <div className="mt-3 flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2">
@@ -227,12 +228,12 @@ export default function BackupsPage() {
     <>
       <Seo
         title="Backups & Recovery — 7 Backup Types for Every Scenario"
-        description="Seven purpose-built backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Free local backups. Offsite storage at $0.04 per GB."
+        description="Seven purpose-built backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Free local backups, with offsite storage billed per GB."
         path="/features/backups"
         keywords={["server backup", "VPS backup", "backup types", "offsite backup", "snapshot", "server image", "portable backup", "disaster recovery"]}
         faqSchema={[
           { q: "How many backup types does SharkCluster offer?", a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Each solves a different failure scenario." },
-          { q: "Are backups free on SharkCluster?", a: "Yes, local backups are free. Offsite backup storage to object storage is available at $0.04 per GB, and is the only type that survives server loss." },
+          { q: "Are backups free on SharkCluster?", a: "Local backups are free. Offsite backup storage to object storage is billed per GB, and is the only type that survives the loss of the server itself." },
           { q: "What is a portable backup?", a: "A portable backup stores your server in a movable format designed to leave the provider. It's for migrating to another provider or building a new server elsewhere." },
         ]}
         breadcrumbSchema={[
@@ -262,7 +263,7 @@ export default function BackupsPage() {
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-600">
                 Not seven ways to do the same thing — seven purpose-built mechanisms, each answering a different
-                failure scenario. Free local backups included. Offsite storage available at $0.04 per GB.
+                failure scenario. Free local backups included. Offsite storage is billed per GB.
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <a href="https://cloud.sharkcluster.com/register" className="btn-primary btn-lg w-full sm:w-auto">
@@ -377,11 +378,11 @@ export default function BackupsPage() {
                 <h2 className="mt-4 font-display text-2xl font-bold text-ink-900 sm:text-3xl">Backup storage, priced simply</h2>
                 <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-600">
                   Local backups are free and stored on your server. Offsite backups are uploaded to object storage at
-                  $0.04 per GB — and the local copy is deleted after upload, so an offsite backup exists in exactly
+                  {OFFSITE_PER_GB} per GB — and the local copy is deleted after upload, so an offsite backup exists in exactly
                   one place. This is the only backup type that survives server loss.
                 </p>
                 <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                  {["Free local backups", "$0.04/GB offsite", "Auto-delete by retention"].map((point) => (
+                  {["Free local backups", `${OFFSITE_PER_GB}/GB offsite`, "Auto-delete by retention"].map((point) => (
                     <div key={point} className="rounded-xl border border-ink-200/80 bg-white/80 p-3">
                       <Check className="h-4 w-4 text-brand-600" />
                       <p className="mt-2 text-xs font-semibold leading-snug text-ink-700">{point}</p>
@@ -406,7 +407,7 @@ export default function BackupsPage() {
                 </div>
                 <div className="mt-5 space-y-2.5 border-t border-ink-100 pt-4">
                   <div className="flex items-center justify-between text-xs"><span className="text-ink-500">Local backups</span><span className="font-semibold text-emerald-600">Free</span></div>
-                  <div className="flex items-center justify-between text-xs"><span className="text-ink-500">Offsite rate</span><span className="font-semibold text-ink-800">$0.04/GB</span></div>
+                  <div className="flex items-center justify-between text-xs"><span className="text-ink-500">Offsite rate</span><span className="font-semibold text-ink-800">{OFFSITE_PER_GB}/GB</span></div>
                   <div className="flex items-center justify-between text-xs"><span className="text-ink-500">Monthly estimate</span><span className="font-bold text-brand-700">$4.80/mo</span></div>
                 </div>
               </div>

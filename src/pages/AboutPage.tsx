@@ -11,7 +11,14 @@ import { useReveal } from "@/hooks/useReveal";
 const stats = [
   { value: "7", label: "Backup types" },
   { value: "5", label: "Deployment methods" },
-  { value: "4", label: "Live cloud providers" },
+// Live provider count must match the cards on /cloud-providers, which currently
+// lists three: DigitalOcean, OVHcloud and Contabo. Vultr and Hetzner are flagged
+// Coming Soon and do not count.
+// TODO_CONFIRM — owner: product. SharkCluster's own infrastructure IS a real
+// provisioning path (backend controller/serverMaster.js, the sharkcluster-pending
+// admin queue) but is not listed on /cloud-providers. If it should be offered,
+// add the card there first — then this count becomes 4 everywhere.
+  { value: "3", label: "Live cloud providers" },
   { value: "∞", label: "Apps per server" },
 ];
 
@@ -200,7 +207,7 @@ export default function AboutPage() {
   const valuesHead = useReveal<HTMLDivElement>();
   const valuesGrid = useReveal<HTMLDivElement>();
   const difference = useReveal<HTMLDivElement>();
-  const team = useReveal<HTMLDivElement>();
+  const teamReveal = useReveal<HTMLDivElement>();
   const careers = useReveal<HTMLDivElement>();
 
   return (
@@ -402,7 +409,7 @@ export default function AboutPage() {
       {/* Team */}
       <section className="section bg-ink-50/40 pt-0">
         <div className="container-px">
-          <div ref={team.ref} className={`reveal ${team.visible ? "is-visible" : ""}`}>
+          <div ref={teamReveal.ref} className={`reveal ${teamReveal.visible ? "is-visible" : ""}`}>
             <div className="mx-auto max-w-2xl text-center">
               <span className="eyebrow">
                 <Users className="h-4 w-4" />
@@ -420,7 +427,7 @@ export default function AboutPage() {
               {team.map((member, i) => (
                 <div
                   key={member.name}
-                  className={`reveal ${team.visible ? "is-visible" : ""} group flex flex-col items-center rounded-2xl border border-ink-200 bg-white p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-500/10`}
+                  className={`reveal ${teamReveal.visible ? "is-visible" : ""} group flex flex-col items-center rounded-2xl border border-ink-200 bg-white p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-500/10`}
                   style={{ transitionDelay: `${(i % 4) * 80}ms` }}
                 >
                   <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-lg shadow-brand-500/20 transition-transform duration-300 group-hover:scale-110">

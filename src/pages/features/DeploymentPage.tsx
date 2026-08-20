@@ -92,7 +92,9 @@ const featureRows = [
 
 const stats = [
   { value: "3", label: "Git providers" },
-  { value: "6+", label: "Stacks supported" },
+  // TODO_CONFIRM — owner: product. Stack list is admin-managed (technologies
+  // table); re-check this count when it changes. Must match /supported-apps.
+  { value: "14", label: "Stacks supported" },
   { value: "1", label: "Click to staging" },
   { value: "0", label: "Config files to touch" },
 ];
@@ -104,6 +106,8 @@ const relatedFeatures = [
   { title: "Caching (Redis & Varnish)", path: "/features/caching", icon: Zap },
 ];
 
+// A sample for the panel below — not the full catalogue. The complete list
+// lives in src/pages/SupportedAppsPage.tsx (allApps) and drives the stat above.
 const supportedStacks = [
   "Laravel 9–13",
   "WordPress",
@@ -488,7 +492,7 @@ export default function DeploymentPage() {
                     <Boxes className="h-4 w-4 text-brand-600" />
                     <span className="text-sm font-bold text-ink-900">Supported Stacks</span>
                   </div>
-                  <span className="text-xs font-semibold text-ink-400">{supportedStacks.length} stacks</span>
+                  <span className="text-xs font-semibold text-ink-400">Popular stacks</span>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {supportedStacks.map((stack) => (

@@ -69,7 +69,7 @@ const relatedFeatures = [
 ];
 
 const selfHostedFaqSchema = [
-  { q: "What self-hosted business apps can I run on SharkCluster?", a: "You can run any PHP, Node.js, Python, Ruby, .NET, or Docker application, including ERP systems like ERPNext and Odoo, helpdesk tools like Zammad and osTicket, invoicing apps like Invoice Ninja, and productivity tools like Nextcloud and BookStack." },
+  { q: "What self-hosted business apps can I run on SharkCluster?", a: "You can run any PHP, Node.js, Python, or Docker application, including ERP systems like ERPNext and Odoo, helpdesk tools like Zammad and osTicket, invoicing apps like Invoice Ninja, and productivity tools like Nextcloud and BookStack." },
   { q: "Is my data secure when self-hosting business apps?", a: "Yes. Your data lives entirely on the VPS you choose. SharkCluster never stores your application data on its own infrastructure. The panel communicates with your server over SSH to manage it." },
   { q: "Do I need to pay per user or per agent for self-hosted apps?", a: "No. Since these are open-source self-hosted applications, there are no per-seat or per-agent licensing fees. You can have unlimited users, agents, and clients at no additional cost." },
 ];

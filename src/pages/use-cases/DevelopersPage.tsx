@@ -388,24 +388,6 @@ export default function DevelopersPage() {
         </section>
       ))}
 
-      {/* Testimonial */}
-      <section className="section pt-0">
-        <div className="container-px">
-          <div className={`reveal ${visible ? "is-visible" : ""} mx-auto max-w-3xl`}>
-            <div className="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-white p-8">
-              <p className="text-lg leading-relaxed text-ink-800">"The config drift detection caught a manual Redis edit that would have caused session loss in production. The panel reads the actual running config and tells you when it doesn't match. That's next-level."</p>
-              <div className="mt-4 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 font-display text-sm font-bold text-brand-700">PN</span>
-                <div>
-                  <p className="text-sm font-semibold text-ink-900">Priya Nair</p>
-                  <p className="text-xs text-ink-500">Senior DevOps Engineer, DataForge</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Highlight section */}
       <section className="section pt-0">
         <div className="container-px">

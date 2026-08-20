@@ -1,0 +1,43 @@
+# Old-site URL map + SPA fallback (Netlify format).
+#
+# The previous Next.js site at sharkcluster.com had 27 indexed routes. Without
+# these, every one 404s and the rankings are lost.
+#
+# The final catch-all MUST stay last: it serves index.html for any path the
+# rules above did not match, which is what makes deep links work at all on a
+# static host.
+
+# Legal
+/privacy-policy                     /legal/privacy               301
+/terms-of-service                   /legal/terms                 301
+/refund-policy                      /legal/refund                301
+
+# Support / company
+# TODO_CONFIRM — repoint /help-center at /support once that page exists (plan §3.1).
+/help-center                        /contact                     301
+/careers                            /about                       301
+
+# Segments
+/use-cases                          /who-we-serve/agencies       301
+/solutions/digital-agencies         /who-we-serve/agencies       301
+/solutions/enterprise-multisite     /who-we-serve/agencies       301
+/solutions/engineering-teams        /who-we-serve/developers     301
+/solutions/startups-smbs            /who-we-serve/smb            301
+/solutions/high-scale-commerce      /who-we-serve/ecommerce      301
+/solutions/media-publishing         /who-we-serve/global         301
+/solutions/advanced-threat-defense  /security                    301
+/solutions/shark-task-scheduler     /features/cronjobs           301
+
+# Products
+/products/unified-invoicing         /features/billing            301
+/products/shark-managed-cluster     /features/managed-databases  301
+/products/shark-flexible-compute    /features/server-management  301
+/products/shark-ai-intelligence     /features/monitoring         301
+/products/cloud-providers/digitalocean  /cloud-providers/digitalocean  301
+
+# Per-stack pages are not rebuilt yet (plan §6.3) — send them to the hub
+# rather than 404 while they are outstanding.
+/products/supported-applications/*  /supported-apps              301
+
+# SPA fallback — must be last.
+/*                                  /index.html                  200

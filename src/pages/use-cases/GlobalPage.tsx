@@ -7,9 +7,19 @@ import Seo from "@/components/Seo";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
 
+// Live provider count must match the cards on /cloud-providers, which currently
+// lists three: DigitalOcean, OVHcloud and Contabo. Vultr and Hetzner are flagged
+// Coming Soon and do not count.
+// TODO_CONFIRM — owner: product. SharkCluster's own infrastructure IS a real
+// provisioning path (backend controller/serverMaster.js, the sharkcluster-pending
+// admin queue) but is not listed on /cloud-providers. If it should be offered,
+// add the card there first — then this count becomes 4 everywhere.
+// TODO_CONFIRM — owner: marketing. If a region count belongs here, it has to come
+// from the provider sync (backend controller/location.js), not a literal — provider
+// regions change and a hardcoded number goes stale without anyone noticing.
 const stats = [
-  { value: "40+", label: "Datacenter locations" },
   { value: "3", label: "Live cloud providers" },
+  { value: "1", label: "Panel for every region" },
   { value: "0", label: "Vendor lock-in" },
   { value: "100%", label: "Data on your VPS" },
 ];
@@ -130,7 +140,7 @@ function MockPanel({ type }: { type: string }) {
             </span>
             <span className="text-sm font-semibold text-ink-900">Global Regions</span>
           </div>
-          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">40+ DCs</span>
+          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">Global DCs</span>
         </div>
         <div className="space-y-2.5">
           {[
@@ -422,7 +432,7 @@ export default function GlobalPage() {
                 </p>
                 <div className="mt-6 grid gap-3 sm:grid-cols-3">
                   {[
-                    "40+ datacenter locations across 3 providers",
+                    "Datacenter locations across 3 providers",
                     "Portable backups move between providers",
                     "No vendor lock-in — switch anytime",
                   ].map((point) => (

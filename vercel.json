@@ -1,0 +1,28 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/privacy-policy", "destination": "/legal/privacy", "permanent": true },
+    { "source": "/terms-of-service", "destination": "/legal/terms", "permanent": true },
+    { "source": "/refund-policy", "destination": "/legal/refund", "permanent": true },
+    { "source": "/help-center", "destination": "/contact", "permanent": true },
+    { "source": "/careers", "destination": "/about", "permanent": true },
+    { "source": "/use-cases", "destination": "/who-we-serve/agencies", "permanent": true },
+    { "source": "/solutions/digital-agencies", "destination": "/who-we-serve/agencies", "permanent": true },
+    { "source": "/solutions/enterprise-multisite", "destination": "/who-we-serve/agencies", "permanent": true },
+    { "source": "/solutions/engineering-teams", "destination": "/who-we-serve/developers", "permanent": true },
+    { "source": "/solutions/startups-smbs", "destination": "/who-we-serve/smb", "permanent": true },
+    { "source": "/solutions/high-scale-commerce", "destination": "/who-we-serve/ecommerce", "permanent": true },
+    { "source": "/solutions/media-publishing", "destination": "/who-we-serve/global", "permanent": true },
+    { "source": "/solutions/advanced-threat-defense", "destination": "/security", "permanent": true },
+    { "source": "/solutions/shark-task-scheduler", "destination": "/features/cronjobs", "permanent": true },
+    { "source": "/products/unified-invoicing", "destination": "/features/billing", "permanent": true },
+    { "source": "/products/shark-managed-cluster", "destination": "/features/managed-databases", "permanent": true },
+    { "source": "/products/shark-flexible-compute", "destination": "/features/server-management", "permanent": true },
+    { "source": "/products/shark-ai-intelligence", "destination": "/features/monitoring", "permanent": true },
+    { "source": "/products/cloud-providers/digitalocean", "destination": "/cloud-providers/digitalocean", "permanent": true },
+    { "source": "/products/supported-applications/:path*", "destination": "/supported-apps", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

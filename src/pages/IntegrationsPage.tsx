@@ -14,6 +14,7 @@ import {
 import Seo from "@/components/Seo";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
+import { OFFSITE_PER_GB } from "@/content/pricing";
 
 const stats = [
   { value: "13", label: "Live integrations" },
@@ -82,7 +83,7 @@ const featureRows = [
     desc: "Offsite backups upload to any S3-compatible object storage endpoint. The local copy is deleted after upload, so an offsite backup exists in exactly one place — the only type that survives server loss.",
     points: [
       "Any S3-compatible endpoint",
-      "Offsite backups at $0.04 per GB",
+      `Offsite backups at ${OFFSITE_PER_GB} per GB`,
       "Local copy deleted after upload",
       "The only backup type that survives server loss",
     ],

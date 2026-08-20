@@ -1,5 +1,6 @@
 import { Server, ShieldCheck, Database, GitBranch, Cloud, Terminal, Activity, Layers, Zap, RefreshCw, HardDrive, Lock, Network, Boxes, Cpu, FileCode, Gauge } from "lucide-react";
 import { useReveal } from "@/hooks/useReveal";
+import { OFFSITE_PER_GB } from "@/content/pricing";
 
 export default function Features() {
   const { ref, visible } = useReveal<HTMLDivElement>();
@@ -27,7 +28,7 @@ export default function Features() {
       icon: RefreshCw,
       title: "7 Backup Types",
       desc: "Auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning — each solving a different failure scenario.",
-      points: ["Free local backups", "Offsite storage — $0.04/GB", "Pre-restore safety backup"],
+      points: ["Free local backups", `Offsite storage — ${OFFSITE_PER_GB}/GB`, "Pre-restore safety backup"],
     },
     {
       icon: Activity,

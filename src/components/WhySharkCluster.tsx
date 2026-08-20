@@ -5,7 +5,7 @@ const benefits = [
   {
     icon: HardDriveDownload,
     title: "Free Local Backups",
-    desc: "Local backups are included at no cost. Auto backups, snapshots, server images, and full server backups — all free. Offsite storage is available at $0.04 per GB if you need it.",
+    desc: "Local backups are included at no cost. Auto backups, snapshots, server images, and full server backups — all free. Offsite storage is billed per GB if you need it.",
     badge: "Included",
   },
   {

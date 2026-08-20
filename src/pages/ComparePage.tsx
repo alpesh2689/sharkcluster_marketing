@@ -7,7 +7,10 @@ import { Check, X, ArrowRight, TrendingUp, Shield, Server, RefreshCw, Users, Zap
 const competitors = [
   {
     name: "SharkCluster",
-    price: "$11/mo",
+    // Competitors charge a panel fee on top of the server. SharkCluster does
+    // not — verified against the billing cycle: invoices carry server, backup,
+    // Cloudflare and registry lines, never a plan fee. See /pricing.
+    price: "No platform fee",
     features: { freeBackups: true, freeMigrations: true, devopsManager: true, selfHostedApps: true, unlimitedApps: true, multiProvider: true, configDrift: true, vclEditing: true, scopedDeployKeys: true, noPerSeat: true },
     highlighted: true,
   },

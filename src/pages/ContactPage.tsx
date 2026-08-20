@@ -4,16 +4,25 @@ import Seo from "@/components/Seo";
 import PageHero from "@/components/PageHero";
 import { useReveal } from "@/hooks/useReveal";
 
+// TODO_CONFIRM — owner: marketing.
+//  - Verify hello@ and support@ actually receive mail and are monitored.
+//  - The phone entry was a reserved fictional number (+1 555 01xx range).
+//    Supply a real number or delete the entry entirely; do not ship a
+//    placeholder that looks dialable.
 const contactMethods = [
   { icon: Mail, label: "Email", value: "hello@sharkcluster.com", href: "mailto:hello@sharkcluster.com" },
   { icon: MessageSquare, label: "Support", value: "support@sharkcluster.com", href: "mailto:support@sharkcluster.com" },
-  { icon: Phone, label: "Phone", value: "+1 (555) 123-4567", href: "tel:+15551234567" },
+  { icon: Phone, label: "Phone", value: "TODO_CONFIRM", href: undefined },
 ];
 
 export default function ContactPage() {
   const { ref, visible } = useReveal<HTMLDivElement>();
   const [submitted, setSubmitted] = useState(false);
 
+  // TODO_CONFIRM — LAUNCH BLOCKER, owner: marketing + backend.
+  // This form has no backend. It shows a success state and discards the
+  // message — a visitor believes they have contacted us and nobody has.
+  // Wire this to a real endpoint (or an inbox) before /contact ships.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
@@ -40,21 +49,27 @@ export default function ContactPage() {
           <div ref={ref} className={`reveal ${visible ? "is-visible" : ""} grid gap-8 lg:grid-cols-[1fr_1.5fr]`}>
             {/* Contact methods */}
             <div className="space-y-4">
-              {contactMethods.map((method) => (
-                <a
-                  key={method.label}
-                  href={method.href}
-                  className="card-hover group flex items-center gap-4 p-5"
-                >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-500 group-hover:text-white">
-                    <method.icon className="h-5.5 w-5.5" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-ink-900">{method.label}</p>
-                    <p className="text-sm text-ink-500">{method.value}</p>
-                  </div>
-                </a>
-              ))}
+              {contactMethods.map((method) => {
+                // A method with no href is not clickable — render it as plain
+                // content rather than an anchor that offers a hover state and
+                // then does nothing.
+                const Wrapper = method.href ? "a" : "div";
+                return (
+                  <Wrapper
+                    key={method.label}
+                    {...(method.href ? { href: method.href } : {})}
+                    className={`group flex items-center gap-4 p-5 ${method.href ? "card-hover" : "card"}`}
+                  >
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-500 group-hover:text-white">
+                      <method.icon className="h-5.5 w-5.5" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-ink-900">{method.label}</p>
+                      <p className="text-sm text-ink-500">{method.value}</p>
+                    </div>
+                  </Wrapper>
+                );
+              })}
 
               <div className="card p-5">
                 <div className="flex items-center gap-3">

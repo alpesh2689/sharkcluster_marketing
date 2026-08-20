@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
+import { TRIAL_POINTS } from "@/content/trial";
 
 const steps = [
   {
@@ -30,7 +31,7 @@ const steps = [
     desc: "Fresh install, Git deploy, Docker image, ZIP upload, or custom migration. Your server is provisioned and configured automatically.",
     details: [
       "5 deployment methods to choose from",
-      "Choose your stack: PHP, Node.js, Python, Ruby, .NET, Docker",
+      "Choose your stack: PHP, Node.js, Python, Docker",
       "Select web server (Apache or Nginx) and database engine",
       "Automated install pipeline with visible progress log",
     ],
@@ -311,7 +312,7 @@ export default function HowItWorksPage() {
               <ArrowRight className="h-5 w-5" />
             </a>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-              {["No credit card required", "No lock-in contracts", "Cancel anytime"].map((item) => (
+              {TRIAL_POINTS.map((item) => (
                 <span key={item} className="flex items-center gap-1.5 text-sm text-ink-500">
                   <Check className="h-4 w-4 text-brand-500" />
                   {item}

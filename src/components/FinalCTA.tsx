@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, Zap, Shield, Headset } from "lucide-react";
 import { useReveal } from "@/hooks/useReveal";
+import { TRIAL_SHORT } from "@/content/trial";
 
 const highlights = [
   { icon: Zap, text: "No lock-in contracts" },
-  { icon: Shield, text: "No credit card required" },
+  { icon: Shield, text: TRIAL_SHORT },
   { icon: Headset, text: "Dedicated DevOps manager" },
 ];
 

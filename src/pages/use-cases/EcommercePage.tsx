@@ -134,9 +134,11 @@ function MockPanel({ type }: { type: string }) {
         </div>
         <div className="space-y-2.5">
           {[
-            { layer: "Varnish (Edge)", hit: "94.2%", ms: "8ms", color: "bg-brand-50 text-brand-600" },
-            { layer: "Redis (Sessions)", hit: "99.1%", ms: "2ms", color: "bg-blue-50 text-blue-600" },
-            { layer: "Database", hit: "—", ms: "45ms", color: "bg-amber-50 text-amber-600" },
+            // No hit rates or latencies here — they would be invented. The panel
+            // shows what each layer does, which is the actual selling point.
+            { layer: "Varnish (Edge)", hit: "Full-page cache", ms: "Layer 1", color: "bg-brand-50 text-brand-600" },
+            { layer: "Redis (Sessions)", hit: "Sessions & objects", ms: "Layer 2", color: "bg-blue-50 text-blue-600" },
+            { layer: "Database", hit: "Origin — only on a miss", ms: "Origin", color: "bg-amber-50 text-amber-600" },
           ].map((c) => (
             <div key={c.layer} className="flex items-center justify-between rounded-lg border border-ink-100 bg-ink-50/50 px-3 py-2.5">
               <div className="flex items-center gap-2.5">
@@ -145,10 +147,10 @@ function MockPanel({ type }: { type: string }) {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-ink-900">{c.layer}</p>
-                  <p className="text-[10px] text-ink-400">Hit rate: {c.hit}</p>
+                  <p className="text-[10px] text-ink-400">{c.hit}</p>
                 </div>
               </div>
-              <span className="font-mono text-xs font-bold text-ink-700">{c.ms}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-ink-400">{c.ms}</span>
             </div>
           ))}
         </div>

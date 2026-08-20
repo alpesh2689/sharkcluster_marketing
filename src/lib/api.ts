@@ -131,3 +131,90 @@ export async function fetchApiDocs(signal?: AbortSignal): Promise<ApiSection[]> 
   const data = await getJson<ApiSection[]>("/get_api_docs", signal);
   return Array.isArray(data) ? data : [];
 }
+
+/* ----------------------------------------------------------------- plans -- */
+
+/**
+ * Public plan catalogue — GET /public/plans.
+ *
+ * Selling prices only. The authenticated /common-plans returns the same rows
+ * plus provider_cost_*, which must never reach a browser.
+ */
+
+export interface PublicPlan {
+  id: string;
+  provider: string;
+  provider_name: string;
+  region: string | null;
+  region_city: string | null;
+  region_country: string | null;
+  plan_code: string | null;
+  plan_name: string | null;
+  vcpus: number | null;
+  memory_gb: number | null;
+  disk_gb: number | null;
+  disk_type: string | null;
+  bandwidth_tb: number | null;
+  price_monthly_usd: string | number | null;
+  price_monthly_inr: string | number | null;
+  price_hourly_usd: string | number | null;
+  price_hourly_inr: string | number | null;
+}
+
+export interface PublicProvider {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+}
+
+export async function fetchPublicPlans(signal?: AbortSignal): Promise<PublicPlan[]> {
+  if (!API_CONFIGURED) return [];
+  const body = await getJson<{ success: boolean; data: PublicPlan[] }>("/public/plans", signal);
+  return body.success && Array.isArray(body.data) ? body.data : [];
+}
+
+export async function fetchActiveProviders(signal?: AbortSignal): Promise<PublicProvider[]> {
+  if (!API_CONFIGURED) return [];
+  const body = await getJson<{ result: boolean; data: PublicProvider[] }>(
+    "/api/providers/active",
+    signal,
+  );
+  if (!body.result || !Array.isArray(body.data)) return [];
+  // The endpoint also returns commission fields; take only what the page needs
+  // so nothing commercial ends up in the client bundle or the DOM.
+  return body.data.map(({ id, name, slug, status }) => ({ id, name, slug, status }));
+}
+
+/* ------------------------------------------------------------- add-ons -- */
+
+/**
+ * Public add-on rates — GET /public/addon-pricing.
+ *
+ * Mirrors what the billing cycle can actually charge: offsite backup per GB
+ * (admin_settings) and active service_pricing rows. Block storage volumes are
+ * absent because nothing bills them.
+ */
+
+export interface AddonService {
+  service_code: string;
+  service_name: string;
+  service_category: string | null;
+  monthly_price_usd: string | number | null;
+  monthly_price_inr: string | number | null;
+  trial_days: number | null;
+}
+
+export interface AddonPricing {
+  offsite_backup_per_gb: { usd: string | number | null; inr: string | number | null };
+  services: AddonService[];
+}
+
+export async function fetchAddonPricing(signal?: AbortSignal): Promise<AddonPricing | null> {
+  if (!API_CONFIGURED) return null;
+  const body = await getJson<{ success: boolean; data: AddonPricing }>(
+    "/public/addon-pricing",
+    signal,
+  );
+  return body.success && body.data ? body.data : null;
+}

@@ -55,7 +55,7 @@ const featureRows = [
     desc: "Run every client site from a single server — WordPress, Laravel, Node, whatever the stack. No per-site licensing, no per-seat fees. Your server, your clients, your margins.",
     points: [
       "Unlimited applications per server",
-      "PHP, Node.js, Python, Ruby, .NET, Docker — all supported",
+      "PHP, Node.js, Python, Docker — all supported",
       "Each app gets its own domain, SSL, and database",
       "Isolate clients without isolating yourself from efficiency",
     ],
@@ -461,7 +461,7 @@ export default function AgenciesPage() {
                   <div className="rounded-lg border-2 border-brand-500 bg-brand-50 p-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-brand-700">SharkCluster VPS</span>
-                      <span className="text-sm font-bold text-brand-700">$29/mo</span>
+                      <span className="text-sm font-bold text-brand-700">One server</span>
                     </div>
                     <p className="mt-1 text-[10px] text-brand-600">Unlimited client sites — flat cost</p>
                     <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-brand-100">
@@ -471,7 +471,7 @@ export default function AgenciesPage() {
                 </div>
                 <div className="mt-4 flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2">
                   <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  <span className="text-xs font-medium text-emerald-700">Save $571/mo — no per-site fees</span>
+                  <span className="text-xs font-medium text-emerald-700">No per-site fees — the cost stays flat as you add clients</span>
                 </div>
               </div>
             </div>

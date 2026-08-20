@@ -4,11 +4,14 @@ import Seo from "@/components/Seo";
 import PageHero from "@/components/PageHero";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
+import { Link } from "react-router-dom";
 
+// NOTE: answers below restate the trial terms in prose. If src/content/trial.ts
+// changes, re-read these — they will not update themselves.
 const faqs = [
   {
     q: "What exactly is included for free?",
-    a: "Free local backups, free SSL certificates, unlimited free migrations, unlimited applications per server, free self-hosted business apps (ERP, helpdesk, ticketing, invoicing), and a dedicated DevOps manager on Business and Enterprise plans. You only pay for your cloud provider's server costs and any optional add-ons like offsite backup storage at $0.04 per GB.",
+    a: "Free local backups, free SSL certificates, unlimited free migrations, unlimited applications per server, free self-hosted business apps (ERP, helpdesk, ticketing, invoicing), and a dedicated DevOps manager on Business and Enterprise plans. You only pay for your cloud provider's server costs and any optional add-ons, such as offsite backup storage, which is billed per GB.",
   },
   {
     q: "Where does my data actually live?",
@@ -24,7 +27,7 @@ const faqs = [
   },
   {
     q: "What kind of self-hosted apps can I run?",
-    a: "Any PHP, Node.js, Python, Ruby, .NET, or Docker application. This includes ERP systems like ERPNext and Odoo, helpdesk tools like Zammad and osTicket, invoicing apps like Invoice Ninja, and anything else you can deploy. Each app gets its own domain, SSL, database, and staging environment.",
+    a: "Any PHP, Node.js, Python, or Docker application. This includes ERP systems like ERPNext and Odoo, helpdesk tools like Zammad and osTicket, invoicing apps like Invoice Ninja, and anything else you can deploy. Each app gets its own domain, SSL, database, and staging environment.",
   },
   {
     q: "What happens if my server goes down?",
@@ -32,7 +35,7 @@ const faqs = [
   },
   {
     q: "How do backups work?",
-    a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Local backups are free. Offsite backup storage (object storage) is available at $0.04 per GB — and it's the only type that survives server loss.",
+    a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Local backups are free. Offsite backup storage (object storage) is billed per GB — and it's the only type that survives the loss of the server itself.",
   },
   {
     q: "Is there really no credit card required to start?",
@@ -146,10 +149,10 @@ export default function FAQPage() {
               <h3 className="font-display text-xl font-bold text-ink-900">Still have questions?</h3>
               <p className="mt-2 text-body-sm">Our team is ready to help you find the answers you need.</p>
               <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <a href="/contact" className="btn-primary">
+                <Link to="/contact" className="btn-primary">
                   Contact Support
                   <ArrowRight className="h-4 w-4" />
-                </a>
+                </Link>
                 <a href="https://cloud.sharkcluster.com/register" className="btn-secondary">
                   Get Started
                 </a>

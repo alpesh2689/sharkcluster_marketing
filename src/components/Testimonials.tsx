@@ -1,53 +1,21 @@
 import { Star, Quote } from "lucide-react";
 import { useReveal } from "@/hooks/useReveal";
 
-const testimonials = [
-  {
-    quote:
-      "We migrated 14 client sites from a cPanel reseller account to SharkCluster in a weekend. The migration was free, the panel is genuinely better, and our clients' data is finally on servers we control.",
-    author: "Marcus Chen",
-    role: "Founder, BrightPixel Agency",
-    initials: "MC",
-  },
-  {
-    quote:
-      "The dedicated DevOps manager is not a gimmick. I had a real engineer on a call helping me tune our Varnish VCL for a Black Friday traffic spike. That kind of support doesn't exist at this price point.",
-    author: "Sarah Williams",
-    role: "CTO, ShopFlow Commerce",
-    initials: "SW",
-  },
-  {
-    quote:
-      "Running our ERP and helpdesk on our own VPS means our customer data never touches a third party. For a company handling sensitive client information, that's the entire reason we chose SharkCluster.",
-    author: "David Okonkwo",
-    role: "Operations Lead, Helix Consulting",
-    initials: "DO",
-  },
-  {
-    quote:
-      "The config drift detection caught a manual Redis edit that would have caused session loss in production. The panel reads the actual running config and tells you when it doesn't match. That's next-level.",
-    author: "Priya Nair",
-    role: "Senior DevOps Engineer, DataForge",
-    initials: "PN",
-  },
-  {
-    quote:
-      "Seven backup types, each solving a different problem. Most hosts give you one button and call it a day. SharkCluster actually explains what each one is for and when to use it.",
-    author: "Tom Becker",
-    role: "Infrastructure Manager, ScaleUp SaaS",
-    initials: "TB",
-  },
-  {
-    quote:
-      "We compared DigitalOcean, Contabo, and Hetzner plans side-by-side in the panel itself. Saved us 40% on our monthly bill by picking the right provider for each workload.",
-    author: "Elena Rossi",
-    role: "Founder, Nimbus Labs",
-    initials: "ER",
-  },
-];
+// TODO_CONFIRM — real quotes only, with the customer's permission.
+// Source: the testimonials table in the product (backend model/testimonial.model.js,
+// controller/testimonials.js) — not copy written here.
+const testimonials: {
+  quote: string;
+  author: string;
+  role: string;
+  initials: string;
+}[] = [];
 
 export default function Testimonials() {
   const { ref, visible } = useReveal<HTMLDivElement>();
+
+  // An empty testimonial wall looks broken; no section at all looks intentional.
+  if (testimonials.length === 0) return null;
 
   return (
     <section className="section relative overflow-hidden bg-ink-50/50">

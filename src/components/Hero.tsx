@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Server, Shield, Database, GitBranch, Activity } from "lucide-react";
+import { TRIAL_TERMS } from "@/content/trial";
 
 const trustPoints = [
   { icon: Shield, text: "Your data stays on your VPS" },
@@ -62,7 +63,7 @@ export default function Hero() {
           </div>
 
           <p className="animate-fade-in-up mt-4 text-sm text-ink-400" style={{ animationDelay: "0.3s" }}>
-            No credit card required · No lock-in contracts · Cancel anytime
+            {TRIAL_TERMS}
           </p>
 
           {/* Trust points */}

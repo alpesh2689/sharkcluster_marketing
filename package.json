@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/generate-sitemap.mjs && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "test:plans": "npx esbuild src/lib/planShaping.ts --bundle --format=cjs --outfile=node_modules/.cache/shaping.cjs --log-level=error && node scripts/planShaping.test.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

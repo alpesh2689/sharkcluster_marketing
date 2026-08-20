@@ -60,7 +60,7 @@ const megaSections: MegaSection[] = [
       {
         title: "Supported Apps",
         links: [
-          { label: "Supported Apps", to: "/supported-apps", desc: "PHP, Node, Python, Ruby, .NET & Docker", icon: Layers },
+          { label: "Supported Apps", to: "/supported-apps", desc: "PHP, Node, Python & Docker", icon: Layers },
           { label: "Cloud Providers Hub", to: "/cloud-providers", desc: "Compare all supported providers", icon: Cloud },
         ],
       },
@@ -245,7 +245,7 @@ export default function Navbar() {
         <div className="hidden items-center gap-2 lg:flex">
           <a href="https://cloud.sharkcluster.com" className="btn-ghost text-sm">Login</a>
           <a href="https://cloud.sharkcluster.com/register" className="btn-primary text-sm">
-            Start Free
+            Get Started
             <ArrowRight className="h-4 w-4" />
           </a>
         </div>
@@ -395,7 +395,7 @@ export default function Navbar() {
             <div className="mt-4 space-y-2 border-t border-ink-200 pt-4">
               <a href="https://cloud.sharkcluster.com" className="btn-secondary w-full">Login</a>
               <a href="https://cloud.sharkcluster.com/register" className="btn-primary w-full">
-                Start Free
+                Get Started
                 <ArrowRight className="h-4 w-4" />
               </a>
             </div>
