@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /legal/sla
+
+Sitemap: https://sharkcluster.com/sitemap.xml
