@@ -303,34 +303,32 @@ export default function FAQPage() {
       {/* Main FAQ section */}
       <section className="section">
         <div className="container-px">
-          <div ref={ref} className={`reveal ${visible ? "is-visible" : ""} space-y-8`}>
-            {/* Search bar */}
-            <div id="faq-search" className="relative max-w-2xl mx-auto scroll-mt-24">
-              <div className="relative flex items-center">
-                <Search className="absolute left-4 h-5 w-5 text-ink-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search questions or keywords (e.g. backup, migration, billing)..."
-                  className="w-full pl-12 pr-10 py-4 bg-white border border-ink-200 rounded-2xl shadow-sm text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all duration-200"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3.5 p-1 rounded-full text-ink-400 hover:text-ink-700 hover:bg-ink-100"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-
+          <div ref={ref} className={`reveal ${visible ? "is-visible" : ""}`}>
             {/* Main layout: sidebar + accordion */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-              {/* Category sidebar */}
-              <div className="lg:col-span-1 bg-white p-5 rounded-2xl border border-ink-200 shadow-sm space-y-1.5 lg:sticky lg:top-24">
-                <div className="flex items-center gap-2 px-2 py-2 text-xs font-bold uppercase tracking-wider text-ink-400 border-b border-ink-100 mb-2">
+            <div id="faq-search" className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start scroll-mt-24">
+              {/* Category sidebar with integrated search */}
+              <div className="lg:col-span-1 bg-white p-5 rounded-2xl border border-ink-200 shadow-sm space-y-3 lg:sticky lg:top-24">
+                {/* Compact search */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search FAQs..."
+                    className="w-full pl-9 pr-8 py-2.5 bg-ink-50/50 border border-ink-200 rounded-xl text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 focus:bg-white transition-all duration-200"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-ink-400 hover:text-ink-700 hover:bg-ink-100"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 px-2 text-xs font-bold uppercase tracking-wider text-ink-400 border-b border-ink-100 pb-2">
                   <Folder className="h-3.5 w-3.5" />
                   Categories
                 </div>
