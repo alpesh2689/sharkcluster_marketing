@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Twitter, Github, Linkedin } from "lucide-react";
+import SharkLogo from "@/components/SharkLogo";
 
 const footerNav = [
   {
@@ -28,7 +29,6 @@ const footerNav = [
       { label: "SMBs", to: "/who-we-serve/smb" },
       { label: "Ecommerce", to: "/who-we-serve/ecommerce" },
       { label: "Self-Hosted Apps", to: "/self-hosted-apps" },
-      { label: "Partners", to: "/partners" },
     ],
   },
   {
@@ -41,8 +41,6 @@ const footerNav = [
       { label: "Case Studies", to: "/case-studies" },
       { label: "Video Library", to: "/video-library" },
       { label: "Compare", to: "/compare" },
-      { label: "Community", to: "/community" },
-      { label: "Reviews", to: "/reviews" },
       { label: "Demo", to: "/demo" },
     ],
   },
@@ -57,7 +55,6 @@ const footerNav = [
       { label: "Privacy Policy", to: "/legal/privacy" },
       { label: "Terms of Service", to: "/legal/terms" },
       { label: "Refund Policy", to: "/legal/refund" },
-      { label: "SLA", to: "/legal/sla" },
     ],
   },
 ];
@@ -77,16 +74,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/30">
-                <svg viewBox="0 0 32 32" className="h-6 w-6" fill="none">
-                  <path
-                    d="M9 10.5c0-1.1.9-2 2-2h6.5c2.5 0 4.5 1.8 4.5 4.2 0 1.7-1 2.8-2.3 3.4 1.6.5 2.8 1.7 2.8 3.6 0 2.5-2 4.3-4.8 4.3H11c-1.1 0-2-.9-2-2V10.5z"
-                    fill="white"
-                  />
-                  <circle cx="14" cy="13" r="1.3" fill="#565ADD" />
-                  <circle cx="14" cy="18.5" r="1.3" fill="#565ADD" />
-                </svg>
-              </span>
+              <SharkLogo className="h-8 w-auto text-brand-500" />
               <span className="font-display text-lg font-extrabold tracking-tight text-ink-900">SharkCluster</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-500">

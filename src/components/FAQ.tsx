@@ -1,61 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, HelpCircle, ArrowRight } from "lucide-react";
 import { useReveal } from "@/hooks/useReveal";
+import { fetchPublicFaqs, FaqItemData } from "@/services/faqService";
 
-// NOTE: answers below restate the trial terms in prose. If src/content/trial.ts
-// changes, re-read these — they will not update themselves.
-const faqs = [
+// Fallback FAQs if API is offline
+const fallbackFaqs = [
   {
     q: "What exactly is included for free?",
-    a: "Free local backups, free SSL certificates, unlimited free migrations, unlimited applications per server, free self-hosted business apps (ERP, helpdesk, ticketing, invoicing), and a dedicated DevOps manager on Business and Enterprise plans. You only pay for your cloud provider's server costs and any optional add-ons, such as offsite backup storage, which is billed per GB.",
+    a: "Free local backups, free SSL certificates, unlimited free migrations, unlimited applications per server, free self-hosted business apps (ERP, helpdesk, ticketing, invoicing), and a dedicated DevOps manager on Business and Enterprise plans.",
   },
   {
     q: "Where does my data actually live?",
-    a: "Your data lives entirely on the VPS you choose at server creation. We never store your application data, databases, or files on our own infrastructure. The panel communicates with your server over SSH to manage it — your data stays on your server, period.",
+    a: "Your data lives entirely on the VPS you choose at server creation. We never store your application data, databases, or files on our own infrastructure.",
   },
   {
     q: "Which cloud providers can I use?",
-    a: "SharkCluster supports multiple cloud providers including DigitalOcean, Contabo, and OVHcloud, with Vultr and Hetzner coming soon. You can compare plans side-by-side at server creation time, and each provider's billing model (hourly, prepaid, or usage-based) is handled transparently.",
+    a: "SharkCluster supports multiple cloud providers including DigitalOcean, Contabo, and OVHcloud, with Vultr and Hetzner coming soon.",
   },
   {
     q: "Can I migrate my existing site for free?",
-    a: "Yes. Unlimited free migrations are included on every plan. Our team handles the migration of your sites, applications, and databases from your current host — as many times as you need, at no cost.",
-  },
-  {
-    q: "What kind of self-hosted apps can I run?",
-    a: "Any PHP, Node.js, Python, or Docker application. This includes ERP systems like ERPNext and Odoo, helpdesk tools like Zammad and osTicket, invoicing apps like Invoice Ninja, and anything else you can deploy. Each app gets its own domain, SSL, database, and staging environment.",
-  },
-  {
-    q: "What happens if my server goes down?",
-    a: "Health alerts monitor CPU, memory, disk, and failed services — you're notified before things break, not after. Uptime monitoring pings your application URLs on your chosen interval. If something goes wrong, your dedicated DevOps manager (Business and Enterprise plans) and our expert support team are available to help.",
+    a: "Yes. Unlimited free migrations are included on every plan. Our team handles the migration of your sites, applications, and databases.",
   },
   {
     q: "How do backups work?",
-    a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Local backups are free. Offsite backup storage (object storage) is billed per GB — and it's the only type that survives the loss of the server itself.",
-  },
-  {
-    q: "Is there really no credit card required to start?",
-    a: "Correct. You can sign up and explore the panel with no credit card required. There are no lock-in contracts — you can cancel anytime. Cloud provider costs are billed separately at provider rates.",
-  },
-  {
-    q: "Can I host private Docker images?",
-    a: "Yes. SharkCluster includes private container registries with repositories, tags, robot accounts for CI pipelines, scoped tokens, storage quotas, and retention policies — everything you need to store and manage private Docker images alongside your deployments.",
-    link: { href: "/features/container-registry", label: "Learn more about Container Registry" },
-  },
-  {
-    q: "Do you offer managed database clusters?",
-    a: "Yes. Managed Database clusters are a separate product from the per-app databases that ship with every application. Clusters come with parameter groups, managed backups, and the ability to outlive a server or be shared across applications.",
-    link: { href: "/features/managed-databases", label: "Learn more about Managed Databases" },
-  },
-  {
-    q: "Can my team access servers without sharing my login?",
-    a: "Yes. SharkCluster supports organizations, teams, and per-server and per-app permissions, so each teammate gets their own login with access scoped to exactly what they need — no shared credentials.",
-    link: { href: "/features/teams", label: "Learn more about Teams & Permissions" },
-  },
-  {
-    q: "Do you provide GST-compliant invoices in India?",
-    a: "Yes. Indian customers receive GST-compliant invoices with CGST/SGST/IGST breakdowns and TDS handling built in.",
-    link: { href: "/who-we-serve/india", label: "Learn more about billing in India" },
+    a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning.",
   },
 ];
 
@@ -98,6 +66,22 @@ function FaqItem({ faq, isOpen, onToggle }: { faq: { q: string; a: string; link?
 export default function FAQ() {
   const { ref, visible } = useReveal<HTMLDivElement>();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [faqsList, setFaqsList] = useState<{ q: string; a: string }[]>(fallbackFaqs);
+
+  useEffect(() => {
+    async function getFaqs() {
+      const data = await fetchPublicFaqs();
+      if (data && data.length > 0) {
+        const dynamicItems = data.flatMap(cat =>
+          (cat.faqs || []).map(f => ({ q: f.question, a: f.answer }))
+        );
+        if (dynamicItems.length > 0) {
+          setFaqsList(dynamicItems);
+        }
+      }
+    }
+    getFaqs();
+  }, []);
 
   return (
     <section id="faq" className="section relative overflow-hidden">
@@ -123,9 +107,9 @@ export default function FAQ() {
 
           {/* Right: accordion */}
           <div className={`reveal ${visible ? "is-visible" : ""} space-y-3`}>
-            {faqs.map((faq, i) => (
+            {faqsList.map((faq, i) => (
               <FaqItem
-                key={faq.q}
+                key={faq.q + i}
                 faq={faq}
                 isOpen={openIndex === i}
                 onToggle={() => setOpenIndex(openIndex === i ? null : i)}
@@ -137,3 +121,4 @@ export default function FAQ() {
     </section>
   );
 }
+

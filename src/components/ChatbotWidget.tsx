@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Bot, Check, Copy, RotateCcw, Send, ShieldCheck, User, X } from "lucide-react";
 import { sanitizeHtml, htmlToText } from "@/lib/sanitizeHtml";
+import SharkLogo from "@/components/SharkLogo";
 
 /**
  * Docs assistant.
@@ -71,16 +72,6 @@ function looksLikeHtml(text: string): boolean {
   return /<(p|ul|ol|li|h[1-6]|pre|code|strong|em|br)\b/i.test(text);
 }
 
-function SharkMark({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 32 32" className={className} fill="none" aria-hidden="true">
-      <path
-        d="M9 10.5c0-1.1.9-2 2-2h6.5c2.5 0 4.5 1.8 4.5 4.2 0 1.7-1 2.8-2.3 3.4 1.6.5 2.8 1.7 2.8 3.6 0 2.5-2 4.3-4.8 4.3H11c-1.1 0-2-.9-2-2V10.5z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
 
 export default function ChatbotWidget() {
   const [open, setOpen] = useState(false);
@@ -214,7 +205,7 @@ export default function ChatbotWidget() {
           className="animate-scale-in pointer-events-auto group flex items-center gap-2.5 rounded-full bg-brand-500 py-3 pl-3 pr-4 text-white shadow-lg shadow-brand-500/30 transition-all hover:bg-brand-600 hover:shadow-xl hover:shadow-brand-600/30 active:scale-[0.97]"
         >
           <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-white/15">
-            <SharkMark className="h-4 w-4" />
+            <SharkLogo className="h-3.5 w-auto" />
             <span className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
@@ -232,7 +223,7 @@ export default function ChatbotWidget() {
           <div className="flex shrink-0 items-center justify-between gap-3 bg-ink-900 px-4 py-3">
             <div className="flex items-center gap-2.5">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white">
-                <SharkMark className="h-4 w-4" />
+                <SharkLogo className="h-3.5 w-auto" />
               </span>
               <div>
                 <p className="font-display text-sm font-bold leading-tight text-white">Docs assistant</p>

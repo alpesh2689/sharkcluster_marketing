@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import {
   Users, Server, Shield, RefreshCw, Lock, UserCog, Check, ArrowRight,
-  ChevronRight, Layers, Globe, GitBranch, Boxes, Handshake, Server as ServerIcon,
+  ChevronRight, Layers, Globe, GitBranch, Boxes, Handshake, Receipt, Server as ServerIcon,
 } from "lucide-react";
 import Seo from "@/components/Seo";
 import FinalCTA from "@/components/FinalCTA";
@@ -110,7 +110,7 @@ const relatedFeatures = [
   { title: "Teams & Permissions", path: "/features/teams", icon: Users },
   { title: "Server Management", path: "/features/server-management", icon: Server },
   { title: "Deployment", path: "/features/deployment", icon: GitBranch },
-  { title: "Partners", path: "/partners", icon: Handshake },
+  { title: "Billing & Invoicing", path: "/features/billing", icon: Receipt },
 ];
 
 const faqSchema = [
@@ -318,8 +318,8 @@ export default function AgenciesPage() {
                   Get Started
                   <ArrowRight className="h-5 w-5" />
                 </a>
-                <Link to="/partners" className="btn-secondary btn-lg w-full sm:w-auto">
-                  Partner Program
+                <Link to="/contact" className="btn-secondary btn-lg w-full sm:w-auto">
+                  Talk to Us
                 </Link>
               </div>
             </div>

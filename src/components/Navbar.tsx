@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import SharkLogo from "@/components/SharkLogo";
 import {
   Menu, X, ChevronDown, ArrowRight,
   Server, Shield, GitBranch, RefreshCw, Activity, Zap,
-  Cloud, Boxes, Cpu, Bot, Package, Receipt,
+  Cloud, Boxes, Package, Receipt,
   Users, Globe, Building2, Handshake, ShoppingCart, Code,
   Database, Network, Layers, Radar,
-  BookOpen, FileText, Video, Star, MessageSquareText, GraduationCap,
+  BookOpen, FileText, Video, Star, GraduationCap,
   Mail, Phone,
 } from "lucide-react";
 
@@ -14,15 +15,37 @@ type IconType = React.ComponentType<{ className?: string }>;
 
 interface MenuLink {
   label: string;
+  /** Ignored when `disabled` — the item is rendered, not linked. */
   to: string;
   desc?: string;
   icon: IconType;
   badge?: string;
+  /**
+   * Shown in the menu but not navigable yet. Distinct from `badge` alone:
+   * Vultr and Hetzner carry a "Coming Soon" badge and still link to a real
+   * page, whereas these have nothing to open.
+   */
+  disabled?: boolean;
+}
+
+interface MenuGroup {
+  title: string;
+  links: MenuLink[];
+  /**
+   * Lay this group out over two columns of the mega menu, with its links in a
+   * 2-up grid, and stack the section's remaining groups in the last content
+   * column. Platform Capabilities needs it: eleven items in one column made the
+   * dropdown nearly 800px tall with two near-empty columns beside it.
+   *
+   * The grid template does not change either way — a wide group plus one
+   * stacked column is the same four tracks as three plain groups.
+   */
+  wide?: boolean;
 }
 
 interface MegaSection {
   label: string;
-  groups: { title: string; links: MenuLink[] }[];
+  groups: MenuGroup[];
   rightPanel?: { title: string; items: { label: string; desc: string; icon: IconType; to: string }[] };
 }
 
@@ -32,19 +55,25 @@ const megaSections: MegaSection[] = [
     groups: [
       {
         title: "Platform Capabilities",
+        wide: true,
+        // Ordered in pairs, because the wide layout reads across a row before
+        // it reads down: run the server, protect it, then the things that hang
+        // off it — data, people, money.
         links: [
           { label: "Server Management", to: "/features/server-management", desc: "Full lifecycle control", icon: Server },
-          { label: "Backups & Recovery", to: "/features/backups", desc: "7 backup types", icon: RefreshCw },
           { label: "Deployment", to: "/features/deployment", desc: "Git, ZIP & Docker", icon: GitBranch },
-          { label: "Caching", to: "/features/caching", desc: "Redis & Varnish", icon: Zap },
+          { label: "Backups & Recovery", to: "/features/backups", desc: "7 backup types", icon: RefreshCw },
           { label: "Monitoring", to: "/features/monitoring", desc: "Health alerts", icon: Activity },
           { label: "Firewall & Security", to: "/features/firewall", desc: "Closed by default", icon: Shield },
-          { label: "Container Registry", to: "/features/container-registry", desc: "Private Docker images", icon: Package },
+          { label: "Caching", to: "/features/caching", desc: "Redis & Varnish", icon: Zap },
           { label: "Managed Databases", to: "/features/managed-databases", desc: "Clusters that outlive servers", icon: Database },
+          { label: "Container Registry", to: "/features/container-registry", desc: "Private Docker images", icon: Package },
           { label: "Teams & Permissions", to: "/features/teams", desc: "Per-server, per-app access", icon: Users },
           { label: "Billing & Invoicing", to: "/features/billing", desc: "One invoice, every provider", icon: Receipt },
           { label: "Self-Hosted Supabase", to: "/features/self-hosted-supabase", desc: "Run your own on a VPS", icon: Boxes },
-          { label: "InfraCaptain", to: "/features/infracaptain", desc: "Deeper infrastructure insight", icon: Radar },
+          // InfraCaptain is not listed here on purpose - it has the Platform
+          // Intelligence panel to itself on the right of this menu, and listing
+          // it twice in one dropdown reads as two different things.
         ],
       },
       {
@@ -89,8 +118,8 @@ const megaSections: MegaSection[] = [
       {
         title: "Partnership Programs",
         links: [
-          { label: "Referral Program", to: "/partners", desc: "Earn recurring commission", icon: Handshake },
-          { label: "Agency Partner Program", to: "/partners", desc: "Volume discounts & co-marketing", icon: Handshake, badge: "Coming Soon" },
+          { label: "Referral Program", to: "/partners", desc: "Earn recurring commission", icon: Handshake, badge: "Coming Soon", disabled: true },
+          { label: "Agency Partner Program", to: "/partners", desc: "Volume discounts & co-marketing", icon: Handshake, badge: "Coming Soon", disabled: true },
         ],
       },
       {
@@ -121,7 +150,7 @@ const megaSections: MegaSection[] = [
         title: "Agency Solutions",
         links: [
           { label: "Agency Hosting", to: "/who-we-serve/agencies", desc: "Unlimited client sites per server", icon: Server },
-          { label: "Agency Partner Program", to: "/partners", desc: "Volume discounts & white-label", icon: Handshake, badge: "Coming Soon" },
+          { label: "Agency Partner Program", to: "/partners", desc: "Volume discounts & white-label", icon: Handshake, badge: "Coming Soon", disabled: true },
           { label: "Agency Success Stories", to: "/case-studies", desc: "How agencies grow with us", icon: GraduationCap },
         ],
       },
@@ -150,8 +179,8 @@ const megaSections: MegaSection[] = [
         title: "Why SharkCluster",
         links: [
           { label: "Compare", to: "/compare", desc: "vs other hosting platforms", icon: Activity },
-          { label: "Community", to: "/community", desc: "Join the conversation", icon: Users },
-          { label: "Reviews", to: "/reviews", desc: "What customers say", icon: Star },
+          { label: "Community", to: "/community", desc: "Join the conversation", icon: Users, badge: "Coming Soon", disabled: true },
+          { label: "Reviews", to: "/reviews", desc: "What customers say", icon: Star, badge: "Coming Soon", disabled: true },
           { label: "Demo", to: "/demo", desc: "See it in action", icon: Video },
         ],
       },
@@ -173,6 +202,74 @@ const topNav: { label: string; to?: string; megaIndex?: number }[] = [
   { label: "Resources", megaIndex: 3 },
   { label: "Pricing", to: "/pricing" },
 ];
+
+/** One row of a mega-menu column: icon, label, optional badge, description. */
+function MegaMenuItem({ item, onNavigate }: { item: MenuLink; onNavigate: () => void }) {
+  const body = (
+    <>
+      <span
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+          item.disabled
+            ? "bg-ink-100 text-ink-400"
+            : "bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-500 group-hover:text-white"
+        }`}
+      >
+        <item.icon className="h-4 w-4" />
+      </span>
+      <span className="min-w-0">
+        <span className="flex items-center gap-2">
+          <span className={`text-sm font-semibold ${item.disabled ? "text-ink-400" : "text-ink-900"}`}>
+            {item.label}
+          </span>
+          {item.badge && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+              {item.badge}
+            </span>
+          )}
+        </span>
+        {item.desc && (
+          <span className={`block truncate text-xs ${item.disabled ? "text-ink-300" : "text-ink-500"}`}>
+            {item.desc}
+          </span>
+        )}
+      </span>
+    </>
+  );
+
+  // A disabled item is shown so people know it is coming, but there is nothing
+  // to open — so it is not a link and is skipped by keyboard navigation.
+  if (item.disabled) {
+    return (
+      <div aria-disabled="true" title="Coming soon" className="flex cursor-not-allowed items-start gap-3 rounded-xl p-2.5 opacity-70">
+        {body}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      to={item.to}
+      className="group flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-brand-50"
+      onClick={onNavigate}
+    >
+      {body}
+    </Link>
+  );
+}
+
+/** One titled column of the mega menu — two columns wide when `wide` is set. */
+function MegaMenuGroup({ group, onNavigate }: { group: MenuGroup; onNavigate: () => void }) {
+  return (
+    <div className={group.wide ? "lg:col-span-2" : undefined}>
+      <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-ink-400">{group.title}</h4>
+      <div className={group.wide ? "grid gap-x-4 gap-y-0.5 lg:grid-cols-2" : "space-y-1"}>
+        {group.links.map((item) => (
+          <MegaMenuItem key={item.label} item={item} onNavigate={onNavigate} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -198,6 +295,10 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const activeSection = activeMega !== null ? megaSections[activeMega] : null;
+  // A wide group takes two tracks and the rest share the last one, so the
+  // dropdown keeps the same four-track shape either way.
+  const wideGroup = activeSection?.groups.find((g) => g.wide);
+  const stackedGroups = activeSection?.groups.filter((g) => !g.wide) ?? [];
 
   return (
     <header
@@ -211,13 +312,9 @@ export default function Navbar() {
       <nav className="container-px flex h-16 items-center justify-between lg:h-18">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5" aria-label="SharkCluster home">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 shadow-lg shadow-brand-500/30">
-            <svg viewBox="0 0 32 32" className="h-6 w-6" fill="none">
-              <path d="M9 10.5c0-1.1.9-2 2-2h6.5c2.5 0 4.5 1.8 4.5 4.2 0 1.7-1 2.8-2.3 3.4 1.6.5 2.8 1.7 2.8 3.6 0 2.5-2 4.3-4.8 4.3H11c-1.1 0-2-.9-2-2V10.5z" fill="white" />
-              <circle cx="14" cy="13" r="1.3" fill="#565ADD" />
-              <circle cx="14" cy="18.5" r="1.3" fill="#565ADD" />
-            </svg>
-          </span>
+          {/* The mark carries its own colour, so it sits on the page rather than
+              inside a filled tile — a square tile would letterbox 51x38 artwork. */}
+          <SharkLogo className="h-8 w-auto text-brand-500" />
           <span className="font-display text-lg font-extrabold tracking-tight text-ink-900">SharkCluster</span>
         </Link>
 
@@ -269,40 +366,24 @@ export default function Navbar() {
         >
           <div className="container-px py-6">
             <div className={`grid gap-6 ${activeSection.rightPanel ? "lg:grid-cols-[1fr_1fr_1fr_280px]" : "lg:grid-cols-3"}`}>
-              {activeSection.groups.map((group) => (
-                <div key={group.title}>
-                  <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-ink-400">{group.title}</h4>
-                  <div className="space-y-1">
-                    {group.links.map((item) => (
-                      <Link
-                        key={item.label}
-                        to={item.to}
-                        className="group flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-brand-50"
-                        onClick={() => setActiveMega(null)}
-                      >
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-500 group-hover:text-white">
-                          <item.icon className="h-4 w-4" />
-                        </span>
-                        <span>
-                          <span className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-ink-900">{item.label}</span>
-                            {item.badge && (
-                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
-                                {item.badge}
-                              </span>
-                            )}
-                          </span>
-                          {item.desc && <span className="block text-xs text-ink-500">{item.desc}</span>}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
+              {wideGroup && <MegaMenuGroup group={wideGroup} onNavigate={() => setActiveMega(null)} />}
 
-              {/* Right panel */}
+              {wideGroup ? (
+                <div className="space-y-6">
+                  {stackedGroups.map((group) => (
+                    <MegaMenuGroup key={group.title} group={group} onNavigate={() => setActiveMega(null)} />
+                  ))}
+                </div>
+              ) : (
+                stackedGroups.map((group) => (
+                  <MegaMenuGroup key={group.title} group={group} onNavigate={() => setActiveMega(null)} />
+                ))
+              )}
+
+              {/* Right panel. self-start so a one-item panel hugs its content
+                  instead of stretching to the tallest column's height. */}
               {activeSection.rightPanel && (
-                <div className="rounded-2xl border border-brand-200 bg-gradient-to-b from-brand-50 to-white p-5">
+                <div className="self-start rounded-2xl border border-brand-200 bg-gradient-to-b from-brand-50 to-white p-5">
                   <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-700">{activeSection.rightPanel.title}</h4>
                   <div className="space-y-2">
                     {activeSection.rightPanel.items.map((item) => (
@@ -339,29 +420,59 @@ export default function Navbar() {
                 {section.groups.map((group) => (
                   <div key={group.title} className="mb-1">
                     <span className="block px-4 py-1 text-xs font-semibold text-ink-300">{group.title}</span>
-                    {group.links.map((item) => (
-                      <Link
-                        key={item.label}
-                        to={item.to}
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-4 py-2.5 hover:bg-brand-50"
-                      >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                          <item.icon className="h-4 w-4" />
-                        </span>
-                        <span>
-                          <span className="flex items-center gap-2">
-                            <span className="block text-sm font-semibold text-ink-900">{item.label}</span>
-                            {item.badge && (
-                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
-                                {item.badge}
+                    {group.links.map((item) => {
+                      const body = (
+                        <>
+                          <span
+                            className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                              item.disabled ? "bg-ink-100 text-ink-400" : "bg-brand-50 text-brand-600"
+                            }`}
+                          >
+                            <item.icon className="h-4 w-4" />
+                          </span>
+                          <span>
+                            <span className="flex items-center gap-2">
+                              <span className={`block text-sm font-semibold ${item.disabled ? "text-ink-400" : "text-ink-900"}`}>
+                                {item.label}
+                              </span>
+                              {item.badge && (
+                                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+                                  {item.badge}
+                                </span>
+                              )}
+                            </span>
+                            {item.desc && (
+                              <span className={`block text-xs ${item.disabled ? "text-ink-300" : "text-ink-500"}`}>
+                                {item.desc}
                               </span>
                             )}
                           </span>
-                          {item.desc && <span className="block text-xs text-ink-500">{item.desc}</span>}
-                        </span>
-                      </Link>
-                    ))}
+                        </>
+                      );
+
+                      if (item.disabled) {
+                        return (
+                          <div
+                            key={item.label}
+                            aria-disabled="true"
+                            className="flex cursor-not-allowed items-center gap-3 rounded-xl px-4 py-2.5 opacity-70"
+                          >
+                            {body}
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <Link
+                          key={item.label}
+                          to={item.to}
+                          onClick={() => setMobileOpen(false)}
+                          className="flex items-center gap-3 rounded-xl px-4 py-2.5 hover:bg-brand-50"
+                        >
+                          {body}
+                        </Link>
+                      );
+                    })}
                   </div>
                 ))}
                 {section.rightPanel && (

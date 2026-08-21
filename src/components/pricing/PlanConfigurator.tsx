@@ -142,12 +142,18 @@ function PlanCardView({
           </p>
         </div>
 
-        <a
-          href="https://cloud.sharkcluster.com/register"
-          className={`mt-auto w-full justify-center pt-0 ${featured ? "btn-primary" : "btn-secondary"} mt-5`}
-        >
-          Get started
-        </a>
+        {/* mt-auto on the wrapper, not the button: it pins the CTA to the bottom
+            so buttons line up across cards of differing content height, while
+            pt-5 guarantees a gap. Putting spacing on the anchor itself fought
+            with .btn-primary's own padding. */}
+        <div className="mt-auto pt-5">
+          <a
+            href="https://cloud.sharkcluster.com/register"
+            className={`w-full ${featured ? "btn-primary" : "btn-secondary"}`}
+          >
+            Get started
+          </a>
+        </div>
       </div>
     </div>
   );

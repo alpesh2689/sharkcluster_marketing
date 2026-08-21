@@ -60,7 +60,8 @@ export const ROUTES: RouteMeta[] = [
   { path: "/pricing", sitemap: true, changefreq: "monthly", priority: 0.9 },
   { path: "/security", sitemap: true, changefreq: "monthly", priority: 0.8 },
   { path: "/how-it-works", sitemap: true, changefreq: "monthly", priority: 0.8 },
-  { path: "/partners", sitemap: true, changefreq: "monthly", priority: 0.7 },
+  // Coming soon — route stays so old links do not 404, but nothing to index.
+  { path: "/partners", sitemap: false },
   { path: "/compare", sitemap: true, changefreq: "monthly", priority: 0.8 },
 
   // Resources
@@ -70,8 +71,8 @@ export const ROUTES: RouteMeta[] = [
   { path: "/product-updates", sitemap: true, changefreq: "weekly", priority: 0.7 },
   { path: "/case-studies", sitemap: true, changefreq: "monthly", priority: 0.7 },
   { path: "/video-library", sitemap: true, changefreq: "monthly", priority: 0.6 },
-  { path: "/community", sitemap: true, changefreq: "monthly", priority: 0.6 },
-  { path: "/reviews", sitemap: true, changefreq: "monthly", priority: 0.7 },
+  { path: "/community", sitemap: false },
+  { path: "/reviews", sitemap: false },
   { path: "/demo", sitemap: true, changefreq: "monthly", priority: 0.7 },
   { path: "/faq", sitemap: true, changefreq: "monthly", priority: 0.7 },
 
@@ -83,7 +84,8 @@ export const ROUTES: RouteMeta[] = [
   { path: "/legal/privacy", sitemap: true, changefreq: "yearly", priority: 0.3 },
   { path: "/legal/terms", sitemap: true, changefreq: "yearly", priority: 0.3 },
   { path: "/legal/refund", sitemap: true, changefreq: "yearly", priority: 0.3 },
-  // /legal/sla is intentionally excluded — robots.txt disallows it until its
+  // /legal/sla is hidden: the route serves ComingSoonPage, the footer link is
+  // removed and robots.txt disallows the path, until the uptime and credit
   // figures are approved. See docs/marketing plan §2.7.
   { path: "/legal/sla", sitemap: false },
 

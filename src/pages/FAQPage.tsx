@@ -1,110 +1,79 @@
-import { useState } from "react";
-import { ChevronDown, HelpCircle, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronDown, HelpCircle, ArrowRight, Search, Folder, Sparkles, X } from "lucide-react";
 import Seo from "@/components/Seo";
 import PageHero from "@/components/PageHero";
 import FinalCTA from "@/components/FinalCTA";
 import { useReveal } from "@/hooks/useReveal";
 import { Link } from "react-router-dom";
+import { fetchPublicFaqs, FaqCategoryData, FaqItemData } from "@/services/faqService";
 
-// NOTE: answers below restate the trial terms in prose. If src/content/trial.ts
-// changes, re-read these — they will not update themselves.
-const faqs = [
+// Static fallback FAQs in case API is loading or offline
+const fallbackFaqs = [
   {
     q: "What exactly is included for free?",
-    a: "Free local backups, free SSL certificates, unlimited free migrations, unlimited applications per server, free self-hosted business apps (ERP, helpdesk, ticketing, invoicing), and a dedicated DevOps manager on Business and Enterprise plans. You only pay for your cloud provider's server costs and any optional add-ons, such as offsite backup storage, which is billed per GB.",
+    a: "Free local backups, free SSL certificates, unlimited free migrations, unlimited applications per server, free self-hosted business apps (ERP, helpdesk, ticketing, invoicing), and a dedicated DevOps manager on Business and Enterprise plans.",
+    categoryName: "General"
   },
   {
     q: "Where does my data actually live?",
-    a: "Your data lives entirely on the VPS you choose at server creation. We never store your application data, databases, or files on our own infrastructure. The panel communicates with your server over SSH to manage it — your data stays on your server, period.",
+    a: "Your data lives entirely on the VPS you choose at server creation. We never store your application data, databases, or files on our own infrastructure.",
+    categoryName: "General"
   },
   {
     q: "Which cloud providers can I use?",
-    a: "SharkCluster supports multiple cloud providers including DigitalOcean, Contabo, and OVHcloud, with Vultr and Hetzner coming soon. You can compare plans side-by-side at server creation time, and each provider's billing model (hourly, prepaid, or usage-based) is handled transparently.",
+    a: "SharkCluster supports multiple cloud providers including DigitalOcean, Contabo, and OVHcloud, with Vultr and Hetzner coming soon.",
+    categoryName: "Servers"
   },
   {
     q: "Can I migrate my existing site for free?",
-    a: "Yes. Unlimited free migrations are included on every plan. Our team handles the migration of your sites, applications, and databases from your current host — as many times as you need, at no cost.",
-  },
-  {
-    q: "What kind of self-hosted apps can I run?",
-    a: "Any PHP, Node.js, Python, or Docker application. This includes ERP systems like ERPNext and Odoo, helpdesk tools like Zammad and osTicket, invoicing apps like Invoice Ninja, and anything else you can deploy. Each app gets its own domain, SSL, database, and staging environment.",
-  },
-  {
-    q: "What happens if my server goes down?",
-    a: "Health alerts monitor CPU, memory, disk, and failed services — you're notified before things break, not after. Uptime monitoring pings your application URLs on your chosen interval. If something goes wrong, your dedicated DevOps manager (Business and Enterprise plans) and our expert support team are available to help.",
+    a: "Yes. Unlimited free migrations are included on every plan. Our team handles the migration of your sites, applications, and databases.",
+    categoryName: "General"
   },
   {
     q: "How do backups work?",
-    a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning. Local backups are free. Offsite backup storage (object storage) is billed per GB — and it's the only type that survives the loss of the server itself.",
+    a: "SharkCluster offers seven backup types: auto backups, snapshots, server images, custom path backups, portable backups, full server backups, and cloning.",
+    categoryName: "Backups"
   },
   {
     q: "Is there really no credit card required to start?",
-    a: "Correct. You can sign up and explore the panel with no credit card required. There are no lock-in contracts — you can cancel anytime. Cloud provider costs are billed separately at provider rates.",
-  },
-  {
-    q: "Can I scale my server later?",
-    a: "Yes. You can resize your server at any time from the Scaling section, with the new price shown before you commit. Note that scaling triggers a provider-required reboot and billing change. Scale-down may be provider-restricted once disk space is allocated.",
-  },
-  {
-    q: "Do you offer staging environments?",
-    a: "Yes. Every application can be cloned into a staging environment with one click — a full copy to test changes before touching production. You can also clone applications across servers.",
-  },
-  {
-    q: "What databases are supported?",
-    a: "MySQL, PostgreSQL, MongoDB, and SQLite are supported natively. The panel creates the database, a user, and a password, and wires them into your application's configuration automatically. For databases that need to outlive a server or be shared, we also offer Managed Database clusters as a separate product.",
-  },
-  {
-    q: "How does the dedicated DevOps manager work?",
-    a: "On Business and Enterprise plans, every account gets a dedicated DevOps manager — a real human engineer who knows your setup and helps with architecture, scaling, troubleshooting, and best practices. They're your go-to contact, not a tier-1 support agent reading from a script.",
-  },
-  {
-    q: "Can I host private Docker images?",
-    a: "Yes. SharkCluster includes private container registries with repositories, tags, robot accounts for CI pipelines, scoped tokens, storage quotas, and retention policies — everything you need to store and manage private Docker images alongside your deployments.",
-    link: { href: "/features/container-registry", label: "Learn more about Container Registry" },
-  },
-  {
-    q: "Do you offer managed database clusters?",
-    a: "Yes. Managed Database clusters are a separate product from the per-app databases that ship with every application. Clusters come with parameter groups, managed backups, and the ability to outlive a server or be shared across applications.",
-    link: { href: "/features/managed-databases", label: "Learn more about Managed Databases" },
-  },
-  {
-    q: "Can my team access servers without sharing my login?",
-    a: "Yes. SharkCluster supports organizations, teams, and per-server and per-app permissions, so each teammate gets their own login with access scoped to exactly what they need — no shared credentials.",
-    link: { href: "/features/teams", label: "Learn more about Teams & Permissions" },
-  },
-  {
-    q: "Do you provide GST-compliant invoices in India?",
-    a: "Yes. Indian customers receive GST-compliant invoices with CGST/SGST/IGST breakdowns and TDS handling built in.",
-    link: { href: "/who-we-serve/india", label: "Learn more about billing in India" },
-  },
+    a: "Correct. You can sign up and explore the panel with no credit card required. There are no lock-in contracts.",
+    categoryName: "Billing"
+  }
 ];
 
-function FaqItem({ faq, isOpen, onToggle }: { faq: { q: string; a: string; link?: { href: string; label: string } }; isOpen: boolean; onToggle: () => void }) {
+function FaqItem({
+  question,
+  answer,
+  isOpen,
+  onToggle
+}: {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
   return (
-    <div className="card overflow-hidden">
+    <div className={`card overflow-hidden border transition-all duration-200 ${isOpen ? "border-brand-500 shadow-md bg-white" : "border-ink-200 bg-white hover:border-ink-300"}`}>
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 p-5 text-left"
+        className="flex w-full items-center justify-between gap-4 p-5 text-left focus:outline-none"
         aria-expanded={isOpen}
       >
-        <span className="font-display text-base font-semibold text-ink-900">{faq.q}</span>
+        <span className="font-display text-base font-semibold text-ink-900 leading-snug">{question}</span>
         <span
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ${
             isOpen ? "bg-brand-500 text-white rotate-180" : "bg-ink-100 text-ink-500"
           }`}
         >
           <ChevronDown className="h-4 w-4" />
         </span>
       </button>
+
       <div className={`grid transition-all duration-300 ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
         <div className="overflow-hidden">
-          <p className="px-5 pb-5 text-sm leading-relaxed text-ink-600">{faq.a}</p>
-          {faq.link && (
-            <a href={faq.link.href} className="ml-5 mb-5 inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:underline">
-              {faq.link.label}
-              <ArrowRight className="h-3.5 w-3.5" />
-            </a>
-          )}
+          <div className="border-t border-ink-100/60 mx-5 pt-3 pb-5">
+            <p className="text-sm leading-relaxed text-ink-600 whitespace-pre-line">{answer}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -113,7 +82,65 @@ function FaqItem({ faq, isOpen, onToggle }: { faq: { q: string; a: string; link?
 
 export default function FAQPage() {
   const { ref, visible } = useReveal<HTMLDivElement>();
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  
+  const [categories, setCategories] = useState<FaqCategoryData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | "all">("all");
+  const [openFaqKey, setOpenFaqKey] = useState<string | null>(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    async function loadFaqs() {
+      setLoading(true);
+      const data = await fetchPublicFaqs();
+      setCategories(data);
+      setLoading(false);
+    }
+    loadFaqs();
+  }, []);
+
+  // Reset pagination when category or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategoryId, searchQuery]);
+
+  // Compute all items flatten
+  const allFaqItems = categories.flatMap(cat =>
+    (cat.faqs || []).map(faq => ({
+      ...faq,
+      categoryName: cat.name,
+      categoryId: cat.id
+    }))
+  );
+
+  // If API returns no data, map fallback items
+  const displayItems = allFaqItems.length > 0 ? allFaqItems : fallbackFaqs.map((item, idx) => ({
+    id: idx,
+    category_id: 0,
+    question: item.q,
+    answer: item.a,
+    categoryName: item.categoryName,
+    categoryId: 0
+  }));
+
+  // Filter items by category & search query
+  const filteredFaqs = displayItems.filter(item => {
+    const matchesCategory = selectedCategoryId === "all" || item.categoryId === selectedCategoryId;
+    const matchesSearch =
+      searchQuery.trim() === "" ||
+      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.answer.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Calculate paginated FAQs
+  const totalPages = Math.ceil(filteredFaqs.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedFaqs = filteredFaqs.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <>
@@ -122,42 +149,174 @@ export default function FAQPage() {
         description="Answers to common questions about SharkCluster: pricing, contracts, data security, migrations, backups, self-hosted apps, supported providers, scaling, and dedicated DevOps support."
         path="/faq"
         keywords={["SharkCluster FAQ", "cloud hosting questions", "VPS hosting help", "self-hosted apps FAQ", "server management questions"]}
-        faqSchema={faqs}
         breadcrumbSchema={[{ name: "Home", path: "/" }, { name: "FAQ", path: "/faq" }]}
       />
+
       <PageHero
-        eyebrow="FAQ"
-        title="Questions, answered"
-        description="Everything you need to know about SharkCluster — pricing, features, security, migrations, and more. Can't find what you're looking for? Our team is happy to help."
+        eyebrow="Help Center"
+        title="Frequently Asked Questions"
+        description="Search questions, filter by category, or browse answers below to learn everything about SharkCluster."
         icon={HelpCircle}
       />
 
-      <section className="section pt-8">
+      <section className="section pt-8 pb-16">
         <div className="container-px">
-          <div ref={ref} className={`reveal ${visible ? "is-visible" : ""} mx-auto max-w-3xl space-y-3`}>
-            {faqs.map((faq, i) => (
-              <FaqItem
-                key={faq.q}
-                faq={faq}
-                isOpen={openIndex === i}
-                onToggle={() => setOpenIndex(openIndex === i ? null : i)}
-              />
-            ))}
+          <div ref={ref} className={`reveal ${visible ? "is-visible" : ""} space-y-8`}>
 
-            {/* Still have questions */}
-            <div className="mt-8 rounded-2xl border border-ink-200 bg-ink-50/50 p-8 text-center">
-              <h3 className="font-display text-xl font-bold text-ink-900">Still have questions?</h3>
-              <p className="mt-2 text-body-sm">Our team is ready to help you find the answers you need.</p>
-              <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Link to="/contact" className="btn-primary">
+            {/* Top Easy Search Bar */}
+            <div className="relative max-w-2xl mx-auto">
+              <div className="relative flex items-center">
+                <Search className="absolute left-4 h-5 w-5 text-ink-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search questions or keywords (e.g. backup, migration, billing)..."
+                  className="w-full pl-12 pr-10 py-3.5 bg-white border border-ink-200 rounded-2xl shadow-sm text-sm text-ink-900 placeholder-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all duration-200"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3.5 p-1 rounded-full text-ink-400 hover:text-ink-700 hover:bg-ink-100"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Main Content Layout: Left Category Sidebar + Right Accordion List */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+              
+              {/* Category Filter Sidebar */}
+              <div className="lg:col-span-1 bg-white p-5 rounded-2xl border border-ink-200 shadow-sm space-y-2 sticky top-24">
+                <div className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-ink-400 border-b border-ink-100 mb-2">
+                  <Folder className="h-3.5 w-3.5" />
+                  Categories
+                </div>
+
+                <button
+                  onClick={() => setSelectedCategoryId("all")}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    selectedCategoryId === "all"
+                      ? "bg-brand-500 text-white font-semibold shadow-sm"
+                      : "text-ink-700 hover:bg-ink-50 hover:text-ink-900"
+                  }`}
+                >
+                  <span>All Categories</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${selectedCategoryId === "all" ? "bg-white/20 text-white" : "bg-ink-100 text-ink-600"}`}>
+                    {displayItems.length}
+                  </span>
+                </button>
+
+                {categories.map((cat) => {
+                  const count = (cat.faqs || []).length;
+                  const isSelected = selectedCategoryId === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategoryId(cat.id)}
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                        isSelected
+                          ? "bg-brand-500 text-white font-semibold shadow-sm"
+                          : "text-ink-700 hover:bg-ink-50 hover:text-ink-900"
+                      }`}
+                    >
+                      <span className="truncate max-w-[130px] text-left">{cat.name}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-ink-100 text-ink-600"}`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Right Accordion Questions List */}
+              <div className="lg:col-span-3 space-y-3">
+                {loading ? (
+                  <div className="bg-white p-12 text-center rounded-2xl border border-ink-200 shadow-sm">
+                    <Sparkles className="h-8 w-8 text-brand-500 animate-spin mx-auto mb-3" />
+                    <p className="text-sm font-medium text-ink-600">Loading FAQs...</p>
+                  </div>
+                ) : filteredFaqs.length === 0 ? (
+                  <div className="bg-white p-12 text-center rounded-2xl border border-ink-200 shadow-sm space-y-3">
+                    <HelpCircle className="h-10 w-10 text-ink-300 mx-auto" />
+                    <h4 className="text-base font-bold text-ink-800">No matching questions found</h4>
+                    <p className="text-sm text-ink-500 max-w-sm mx-auto">
+                      Try searching with different keywords or switch to another category.
+                    </p>
+                    <button
+                      onClick={() => { setSearchQuery(""); setSelectedCategoryId("all"); }}
+                      className="btn-secondary text-xs py-1.5 px-3"
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {paginatedFaqs.map((faq, index) => {
+                      const itemKey = `${faq.id}-${index}`;
+                      const isOpen = openFaqKey === itemKey;
+                      return (
+                        <FaqItem
+                          key={itemKey}
+                          question={faq.question}
+                          answer={faq.answer}
+                          isOpen={isOpen}
+                          onToggle={() => setOpenFaqKey(isOpen ? null : itemKey)}
+                        />
+                      );
+                    })}
+
+                    {/* Pagination Bar */}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-between pt-6 border-t border-ink-100">
+                        <span className="text-xs font-medium text-ink-500">
+                          Showing {startIndex + 1} - {Math.min(startIndex + itemsPerPage, filteredFaqs.length)} of {filteredFaqs.length} FAQs
+                        </span>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-ink-200 bg-white text-ink-700 hover:bg-ink-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            Previous
+                          </button>
+                          <span className="text-xs font-semibold text-ink-700 px-2">
+                            {currentPage} / {totalPages}
+                          </span>
+                          <button
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-ink-200 bg-white text-ink-700 hover:bg-ink-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            Next
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Separate Full Container Width "Still have questions?" Section */}
+            <div className="mt-12 rounded-2xl border border-ink-200 bg-gradient-to-r from-ink-50 via-white to-brand-50/40 p-8 md:p-10 text-center shadow-sm ">
+              <h3 className="font-display text-xl md:text-2xl font-bold text-ink-900">Still have questions?</h3>
+              <p className="mt-2 text-sm md:text-base text-ink-600 max-w-xl mx-auto">
+                Our support team and DevOps experts are here to help you find the answers you need anytime.
+              </p>
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Link to="/contact" className="btn-primary text-sm px-6 py-3">
                   Contact Support
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Link>
-                <a href="https://cloud.sharkcluster.com/register" className="btn-secondary">
-                  Get Started
+                <a href="https://cloud.sharkcluster.com/register" className="btn-secondary text-sm px-6 py-3">
+                  Get Started Free
                 </a>
               </div>
             </div>
+
           </div>
         </div>
       </section>

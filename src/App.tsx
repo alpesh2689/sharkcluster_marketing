@@ -13,14 +13,12 @@ import DocGuidePage from "@/pages/docs/DocGuidePage";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import ComingSoonPage from "@/pages/ComingSoonPage";
 import CloudProvidersPage from "@/pages/CloudProvidersPage";
 import SupportedAppsPage from "@/pages/SupportedAppsPage";
-import PartnersPage from "@/pages/PartnersPage";
 import BlogPage from "@/pages/BlogPage";
 import BlogPostPage from "@/pages/BlogPostPage";
 import ComparePage from "@/pages/ComparePage";
-import CommunityPage from "@/pages/CommunityPage";
-import ReviewsPage from "@/pages/ReviewsPage";
 import DemoPage from "@/pages/DemoPage";
 import CaseStudiesPage from "@/pages/CaseStudiesPage";
 import VideoLibraryPage from "@/pages/VideoLibraryPage";
@@ -59,7 +57,6 @@ import GlobalPage from "@/pages/use-cases/GlobalPage";
 // Legal pages
 import PrivacyPage from "@/pages/legal/PrivacyPage";
 import TermsPage from "@/pages/legal/TermsPage";
-import SLAPage from "@/pages/legal/SLAPage";
 import RefundPage from "@/pages/legal/RefundPage";
 
 export default function App() {
@@ -101,12 +98,60 @@ export default function App() {
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/security" element={<SecurityPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/partners" element={<PartnersPage />} />
+          {/* Not open yet. The built pages remain at @/pages/PartnersPage,
+              CommunityPage and ReviewsPage — point the route back at one to
+              restore it, and flip sitemap:true in src/routes.ts. */}
+          <Route
+            path="/partners"
+            element={
+              <ComingSoonPage
+                eyebrow="Partners"
+                title="Partner programmes,"
+                highlight="opening soon"
+                description="Referral and agency partner programmes are not open yet. We are finalising commission terms and payout schedules before we invite anyone in."
+                path="/partners"
+                alternatives={[
+                  { label: "For agencies", to: "/who-we-serve/agencies" },
+                  { label: "Talk to us", to: "/contact" },
+                ]}
+              />
+            }
+          />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/compare" element={<ComparePage />} />
-          <Route path="/community" element={<CommunityPage />} />
-          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route
+            path="/community"
+            element={
+              <ComingSoonPage
+                eyebrow="Community"
+                title="Our community"
+                highlight="is being built"
+                description="We are setting up the places where SharkCluster users can compare notes. Nothing to join just yet."
+                path="/community"
+                alternatives={[
+                  { label: "Documentation", to: "/docs" },
+                  { label: "Ask support", to: "/contact" },
+                ]}
+              />
+            }
+          />
+          <Route
+            path="/reviews"
+            element={
+              <ComingSoonPage
+                eyebrow="Reviews"
+                title="Customer reviews,"
+                highlight="coming soon"
+                description="We would rather publish real reviews from real customers than fill this page with copy we wrote ourselves. It goes live when we have them."
+                path="/reviews"
+                alternatives={[
+                  { label: "Compare platforms", to: "/compare" },
+                  { label: "See the features", to: "/features" },
+                ]}
+              />
+            }
+          />
           <Route path="/demo" element={<DemoPage />} />
           <Route path="/case-studies" element={<CaseStudiesPage />} />
           <Route path="/video-library" element={<VideoLibraryPage />} />
@@ -121,7 +166,26 @@ export default function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/legal/privacy" element={<PrivacyPage />} />
           <Route path="/legal/terms" element={<TermsPage />} />
-          <Route path="/legal/sla" element={<SLAPage />} />
+          {/* Hidden for now. Every figure on the SLA is a contractual commitment
+              and none are approved yet — see the TODO_CONFIRM at the top of
+              @/pages/legal/SLAPage. Point this route back at <SLAPage /> once
+              the numbers are signed off. robots.txt also disallows the path. */}
+          <Route
+            path="/legal/sla"
+            element={
+              <ComingSoonPage
+                eyebrow="Service Level Agreement"
+                title="Our SLA is"
+                highlight="being finalised"
+                description="Uptime commitments and service credits are contractual promises, so we are not publishing ours until the numbers are agreed and signed off. If you need SLA terms for a contract or procurement review right now, ask us and we will put them in writing."
+                path="/legal/sla"
+                alternatives={[
+                  { label: "Terms of Service", to: "/legal/terms" },
+                  { label: "Request SLA terms", to: "/contact" },
+                ]}
+              />
+            }
+          />
           <Route path="/legal/refund" element={<RefundPage />} />
           <Route path="/refund-policy" element={<Navigate to="/legal/refund" replace />} />
           <Route path="*" element={<NotFoundPage />} />
